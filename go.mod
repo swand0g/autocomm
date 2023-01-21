@@ -1,4 +1,4 @@
-module swand0g/chatcomm
+module swand0g/autocomm
 
 go 1.18
 

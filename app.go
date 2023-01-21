@@ -11,25 +11,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type model struct {
-	choices 	[]string
-	cursor 		int
-	selected 	map[int]struct{}
-	help 		  help.Model
-	keymap 		keymap
-
-	quitting  bool
-
-	spinner  spinner.Model
-}
-
-type keymap struct {
-	Quit 		key.Binding
-	Choose  key.Binding
-	Up 			key.Binding
-	Down 		key.Binding
-}
-
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:

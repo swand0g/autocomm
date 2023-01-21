@@ -16,3 +16,7 @@
 
 # Go workspace file
 go.work
+
+# Other
+chatcomm
+.DS_Store

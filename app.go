@@ -48,7 +48,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "What should we buy at the market?\n\n"
+	s := "Choose a commit message...\n\n"
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {
@@ -62,11 +62,8 @@ func (m model) View() string {
 
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
-
 	
-	s += fmt.Sprintf("\nPress q to quit! %s\n", m.spinner.View())
-	s += m.helpView()
-	
+	s += m.HelpView()
 	if (m.quitting) {
 		peaceOutMsg := randGoodbyeMessage()
 		return s + fmt.Sprintf("\n\n%s\n", lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render(peaceOutMsg))
@@ -78,15 +75,6 @@ func (m model) View() string {
 
 func (m model) Init() tea.Cmd {
 	return m.spinner.Tick
-}
-
-func (m model) helpView() string {
-	return "\n" + m.help.ShortHelpView([]key.Binding{
-		m.keymap.Quit,
-		m.keymap.Up,
-		m.keymap.Down,
-		m.keymap.Choose,
-	})
 }
 
 func InitalModel() model {

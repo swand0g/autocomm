@@ -1,13 +1,13 @@
 package main
 
 import (
-	"io"
-	"os"
 	"fmt"
+	"io"
 	"log"
-	"time"
-	"os/exec"
 	"math/rand"
+	"os"
+	"os/exec"
+	"time"
 )
 
 func randGoodbyeMessage() string {

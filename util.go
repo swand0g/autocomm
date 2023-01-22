@@ -2,6 +2,8 @@ package main
 
 import (
 	"time"
+	"log"
+	"os/exec"
 	"math/rand"
 )
 
@@ -18,4 +20,13 @@ func randGoodbyeMessage() string {
 		"Have a good one!",
 	}
 	return messages[rand.Intn(len(messages))]
+}
+
+func gitDiff() string {
+	out, err := exec.Command("git", "diff").Output()
+	if err != nil {
+			log.Fatal(err)
+			panic("some error found")
+	}
+	return string(out)
 }

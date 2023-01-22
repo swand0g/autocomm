@@ -6,6 +6,7 @@ require (
 	github.com/charmbracelet/bubbles v0.15.0
 	github.com/charmbracelet/bubbletea v0.23.1
 	github.com/charmbracelet/lipgloss v0.6.0
+	github.com/sashabaranov/go-gpt3 v0.0.0-20230112080207-81b5788cd68e
 )
 
 require (

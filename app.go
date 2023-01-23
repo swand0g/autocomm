@@ -12,46 +12,59 @@ import (
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	switch msg := msg.(type) {
-		case tea.KeyMsg:
-			switch {
-				case key.Matches(msg, m.keymap.Quit):
-					m.appstate = Quitting
-					return m, tea.Quit
-
-				case key.Matches(msg, m.keymap.Up):
-					if m.cursor > 0 {
-						m.cursor--
-					}
-
-				case key.Matches(msg, m.keymap.Down):
-					if m.cursor < len(m.choices) - 1 {
-						m.cursor++
-					}
-
-				case key.Matches(msg, m.keymap.Choose):
-					_, ok := m.selected[m.cursor]
-					if ok {
-						delete(m.selected, m.cursor)
-					} else {
-						m.selected[m.cursor] = struct{}{}
-					}
-				
-				case key.Matches(msg, m.keymap.Authenticate):
-					m.appstate = Authenticating
-			}
-			
-
-		default:
-			m.spinner, cmd = m.spinner.Update(msg)
-			return m, cmd
-	}
 
 	switch m.appstate {
-		case Authenticating:
+		case Choosing: {
+			switch msg := msg.(type) {
+				case tea.KeyMsg:
+					switch {
+						case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
+							m.appstate = Quitting
+							return m, tea.Quit
+		
+						case key.Matches(msg, m.keymap.Up):
+							if m.cursor > 0 {
+								m.cursor--
+							}
+		
+						case key.Matches(msg, m.keymap.Down):
+							if m.cursor < len(m.choices) - 1 {
+								m.cursor++
+							}
+		
+						case key.Matches(msg, m.keymap.Enter):
+							_, ok := m.selected[m.cursor]
+							if ok {
+								delete(m.selected, m.cursor)
+							} else {
+								m.selected[m.cursor] = struct{}{}
+							}
+						
+						case key.Matches(msg, m.keymap.Authenticate):
+							m.appstate = Authenticating
+					}
+					
+		
+				default:
+					m.spinner, cmd = m.spinner.Update(msg)
+					return m, cmd
+			}
+		}
+		
+		case Authenticating: {
+			switch msg := msg.(type) {
+				case tea.KeyMsg:
+					switch {
+						case key.Matches(msg, m.keymap.Enter, m.keymap.Escape):
+							m.appstate = Choosing
+					}
+			}
+
 			m.textInput, cmd = m.textInput.Update(msg)
 			m.textInput.Focus()
 			break
+		}
+		
 		default:
 			break
 	}
@@ -112,10 +125,14 @@ func InitalModel() model {
 		selected: make(map[int]struct{}),
 		keymap: keymap{
 			Quit: key.NewBinding(
-				key.WithKeys("q", "ctrl+c", "esc"),
+				key.WithKeys("q", "ctrl+c"),
 				key.WithHelp(HelpText("q"), "quit"),
 			),
-			Choose: key.NewBinding(
+			Escape: key.NewBinding(
+				key.WithKeys("esc"),
+				key.WithHelp(HelpText("esc"), "escape"),
+			),
+			Enter: key.NewBinding(
 				key.WithKeys("enter", " "),
 				key.WithHelp(HelpText("enter"), "select"),
 			),

@@ -25,10 +25,11 @@ type model struct {
 
 type keymap struct {
 	Quit 						key.Binding
-	Choose  				key.Binding
+	Enter  					key.Binding
 	Up 							key.Binding
 	Down 						key.Binding
 	Authenticate 		key.Binding
+	Escape 					key.Binding
 }
 
 const (

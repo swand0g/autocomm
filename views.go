@@ -17,9 +17,17 @@ func (m model) HelpView() string {
 			keys = append(keys,
 				m.keymap.Up,
 				m.keymap.Down,
-				m.keymap.Choose,
+				m.keymap.Enter,
 				m.keymap.Authenticate,
 			)
+			break
+		case Authenticating:
+			esc := m.keymap.Escape
+			esc.SetHelp(HelpText("esc"), "go back")
+
+			keys = []key.Binding{
+				esc,
+			}
 			break
 		default:
 			break

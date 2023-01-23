@@ -7,11 +7,16 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
-func todo() {
-	fmt.Println("TODO")
+func todo(params ...string) {
+	if len(params) == 0 {
+		fmt.Println("todo!")
+	} else {
+		fmt.Printf("todo! %s", strings.Join(params, ", "))
+	}
 }
 
 func randGoodbyeMessage() string {

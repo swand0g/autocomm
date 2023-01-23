@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/textinput"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 		case tea.KeyMsg:
 			switch {
@@ -43,99 +43,99 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			
 
 		default:
-			var cmd tea.Cmd
 			m.spinner, cmd = m.spinner.Update(msg)
 			return m, cmd
+	}
+
+	switch m.appstate {
+		case Authenticating:
+			m.textInput, cmd = m.textInput.Update(msg)
+			m.textInput.Focus()
+			break
+		default:
+			break
 	}
 
 	return m, nil
 }
 
 func (m model) View() string {
+	v := ""
+
 	switch m.appstate {
 		case Quitting:
-			todo()
+			return m.QuitView()
 
 		case Authenticating:
-			todo()
+			v += m.AuthenticatingView()
+			break
 
+		case Choosing:
+			fallthrough
 		default:
-			todo()
-	}
-
-	s := "Choose a commit message...\n\n"
-	for i, choice := range m.choices {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">" //cursor!
-		}
-
-		checked := " "
-		if _, ok := m.selected[i]; ok {
-			checked = "x" // selected!
-		}
-
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+			v += m.ChooseView()
+			break
 	}
 	
-	s += m.HelpView()
-	if (m.appstate == Authenticating) {
-		peaceOutMsg := randGoodbyeMessage()
-		return fmt.Sprintf("\n%s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render(peaceOutMsg))
-	}
-
-	return s
+	v += m.HelpView()
+	return v
 }
-
-
 
 func (m model) Init() tea.Cmd {
 	return m.spinner.Tick
 }
 
 func InitalModel() model {
-	s := spinner.New()
-	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	apiKey, err := getAPIKey()
+	authenticated := apiKey != "" && err == nil
 	
-	token, err := getAuthToken()
-	authenticated := token != "" && err != nil
-
 	appstate := Authenticating
 	if authenticated {
 		appstate = Choosing
 	}
 
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+
+	h := help.NewModel()
+
+	ti := textinput.New()
+	ti.Placeholder = "Super secret API key"
+	ti.CharLimit = 64
+	ti.Width = 20
+
 	return model{
-		token: token,
+		token: apiKey,
 		authenticated: authenticated,
 		choices: []string{"carrots", "celery", "beans"},
 		selected: make(map[int]struct{}),
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c", "esc"),
-				key.WithHelp("q", "quit"),
+				key.WithHelp(HelpText("q"), "quit"),
 			),
 			Choose: key.NewBinding(
 				key.WithKeys("enter", " "),
-				key.WithHelp("enter", "select"),
+				key.WithHelp(HelpText("enter"), "select"),
 			),
 			Up: key.NewBinding(
 				key.WithKeys("up", "k"),
-				key.WithHelp("↑/k", "up"),
+				key.WithHelp(HelpText("↑/k"), "up"),
 			),
 			Down: key.NewBinding(
 				key.WithKeys("down", "j"),
-				key.WithHelp("↓/j", "down"),
+				key.WithHelp(HelpText("↓/j"), "down"),
 			),
 			Authenticate: key.NewBinding(
 				key.WithKeys("a"),
-				key.WithHelp("a", "authenticate"),
+				key.WithHelp(HelpText("a"), "set auth"),
 			),
 		},
 		// views & components
 		spinner: s,
-		help: help.NewModel(),
+		help: h,
+		textInput: ti,
 		// app state
 		appstate: appstate,
 	}

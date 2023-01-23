@@ -69,6 +69,6 @@ func saveAuthToken(token string) bool {
 	return writeToFile(token, ConfigFileName)
 }
 
-func getAuthToken() (string, error) {
+func getAPIKey() (string, error) {
 	return readFromFile(ConfigFileName)
 }

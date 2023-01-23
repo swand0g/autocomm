@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/textinput"
 )
 
 type model struct {
@@ -18,7 +19,8 @@ type model struct {
 
 	appstate int
 
-	spinner  spinner.Model
+	spinner  	spinner.Model
+	textInput textinput.Model
 }
 
 type keymap struct {

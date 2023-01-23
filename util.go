@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+func todo() {
+	fmt.Println("TODO")
+}
+
 func randGoodbyeMessage() string {
 	rand.Seed(time.Now().UnixNano())
 	messages := []string{
@@ -59,4 +63,12 @@ func readFromFile(fileName string) (string, error) {
 	buf := make([]byte, 1024)
 	_, err = f.Read(buf)
 	return string(buf), err
+}
+
+func saveAuthToken(token string) bool {
+	return writeToFile(token, ConfigFileName)
+}
+
+func getAuthToken() (string, error) {
+	return readFromFile(ConfigFileName)
 }

@@ -13,14 +13,24 @@ type model struct {
 	help 		  help.Model
 	keymap 		keymap
 
-	quitting  bool
+	token string
+	authenticated bool
+
+	appstate int
 
 	spinner  spinner.Model
 }
 
 type keymap struct {
-	Quit 		key.Binding
-	Choose  key.Binding
-	Up 			key.Binding
-	Down 		key.Binding
+	Quit 						key.Binding
+	Choose  				key.Binding
+	Up 							key.Binding
+	Down 						key.Binding
+	Authenticate 		key.Binding
 }
+
+const (
+	Choosing 				= iota
+	Authenticating 	= iota
+	Quitting 				= iota
+)

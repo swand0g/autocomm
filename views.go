@@ -36,7 +36,7 @@ func (m model) QuitView() string {
 func (m model) AuthenticatingView() string {
 	prompt := "What's your OpenAI API key?"
 	ti := m.textInput.View()
-	return fmt.Sprintf("\n%s %s\n", prompt, ti)
+	return fmt.Sprintf("\n%s %s  %s\n", m.spinner.View(), prompt, ti)
 }
 
 func (m model) ChooseView() string {

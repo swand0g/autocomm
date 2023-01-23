@@ -25,11 +25,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						case key.Matches(msg, m.keymap.Up):
 							if m.cursor > 0 {
 								m.cursor--
+							} else {
+								m.cursor = len(m.choices) - 1
 							}
 		
 						case key.Matches(msg, m.keymap.Down):
 							if m.cursor < len(m.choices) - 1 {
 								m.cursor++
+							} else {
+								m.cursor = 0
 							}
 		
 						case key.Matches(msg, m.keymap.Enter):

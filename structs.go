@@ -14,10 +14,15 @@ type model struct {
 	help 		  help.Model
 	keymap 		keymap
 
-	token string
+	apiKey 				string
 	authenticated bool
 
 	appstate int
+	
+	fetching 	 			bool
+	fetchError 			bool
+	maxTokens 			int
+	useConventional bool
 
 	spinner  	spinner.Model
 	textInput textinput.Model

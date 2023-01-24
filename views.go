@@ -48,7 +48,20 @@ func (m model) AuthenticatingView() string {
 }
 
 func (m model) ChooseView() string {
-	s := "Choose a commit message...\n\n"
+	if len(m.choices) == 0 && !m.fetching && !m.fetchError {
+		if !m.fetching {
+			// todo: rip my grant lmao this ran like a million requests
+			// go m.getCommitSuggestions()
+			// m.fetching = true
+		}
+		fs := fmt.Sprintf("\n%s %s\n", m.spinner.View(), "Fetching commit messages...")
+		return fs
+	} else if m.fetchError {
+		es := fmt.Sprintf("%s", "Error fetching commit messages! Check your API key and try again.")
+		return es 
+	}
+
+	s := ""
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {

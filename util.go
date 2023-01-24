@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"regexp"
 	"time"
 )
 
@@ -61,13 +62,11 @@ func readFromFile(fileName string) (string, error) {
 	if err != nil { return "", err }
 
 	filePath := fmt.Sprintf("%s/%s", home, fileName)
-	f, err := os.Open(filePath)
+	buf, err := os.ReadFile(filePath)
 	if err != nil { return "", err }
-	defer f.Close()
-	
-	buf := make([]byte, 1024)
-	_, err = f.Read(buf)
-	return string(buf), err
+
+	s := strings.TrimSpace(string(buf))
+	return s, err
 }
 
 func saveAPIKey(token string) bool {
@@ -76,4 +75,13 @@ func saveAPIKey(token string) bool {
 
 func getAPIKey() (string, error) {
 	return readFromFile(ConfigFileName)
+}
+
+func cleanLines(str string) []string {
+	lines := strings.Split(str, "\n")
+	re := regexp.MustCompile(`^(\d+\.|-|\*)\s+`)
+	for i, line := range lines {
+			lines[i] = strings.TrimSpace(re.ReplaceAllString(line, ""))
+	}
+	return lines
 }

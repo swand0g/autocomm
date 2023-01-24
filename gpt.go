@@ -1,27 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"context"
 
 	gogpt "github.com/sashabaranov/go-gpt3"
 )
 
-const prompt = `
-	The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.
-	Human: Hello, who are you?
-	AI: I am an AI created by OpenAI. How can I help you today?
-	Human:
-`
+const PROMPT = 
+	"Suggest %d good commit messages for my commit%s:" + 
+	"```\n"	+ "%s" + "```\n"
 
-func fetchAiResponse(prompt string) (string, error) {
-	token, err := readFromFile(ConfigFileName)
-	if err != nil { return "", err }
-
-	c := gogpt.NewClient(token)
+func fetchAiResponse(apiKey string, prompt string) (string, error) {
+	c := gogpt.NewClient(apiKey)
 	ctx := context.Background()
 	req := gogpt.CompletionRequest{
 		Model: gogpt.GPT3TextDavinci003,
-		MaxTokens: 25,
+		MaxTokens: 20,
 		Prompt: prompt,
 	}
 	
@@ -29,4 +24,21 @@ func fetchAiResponse(prompt string) (string, error) {
 	if err != nil { return "", err }
 
 	return resp.Choices[0].Text, nil
+}
+
+func fetchCommitSuggestions(apiKey string, conventional bool) ([]string, error) {
+	diff, err := gitDiff()
+	if err != nil { return []string{}, err }
+
+	cs := ""
+	if conventional {
+		cs = " in conventional commit format (type(scope): subject)"
+	}
+
+	fullPrompt := fmt.Sprintf(PROMPT, 5, cs, diff)
+	res, err := fetchAiResponse(apiKey, fullPrompt)
+	if err != nil { return []string{}, err }
+	
+	s := cleanLines(res)
+	return s, nil
 }

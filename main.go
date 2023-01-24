@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+
 func main() {
 	p := tea.NewProgram(InitalModel())
 	if _, err := p.Run(); err != nil {
@@ -16,7 +17,12 @@ func main() {
 }
 
 func main2() {
-	openaiToken, err := readFromFile(ConfigFileName)
-	if err != nil { panic(err) }
-	fmt.Println(openaiToken)
+	k, _ := getAPIKey()
+	
+	s, e := fetchCommitSuggestions(k, false)
+	if e != nil {
+		fmt.Println(e)
+	}
+	
+	fmt.Println(s)
 }

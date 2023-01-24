@@ -59,8 +59,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg := msg.(type) {
 				case tea.KeyMsg:
 					switch {
-						case key.Matches(msg, m.keymap.Enter, m.keymap.Escape):
+						case key.Matches(msg, m.keymap.Escape):
 							m.appstate = Choosing
+							break
+						case key.Matches(msg, m.keymap.Enter):
+							saveAPIKey(m.textInput.Value())
+							m.appstate = Choosing
+							break
 					}
 			}
 
@@ -123,10 +128,12 @@ func InitalModel() model {
 	ti.Width = 20
 
 	return model{
-		token: apiKey,
+		apiKey: apiKey,
 		authenticated: authenticated,
-		choices: []string{"carrots", "celery", "beans"},
+		choices: []string{},
 		selected: make(map[int]struct{}),
+		maxTokens: 100,
+		useConventional: false,
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),
@@ -159,5 +166,7 @@ func InitalModel() model {
 		textInput: ti,
 		// app state
 		appstate: appstate,
+		fetching: false,
+		fetchError: false,
 	}
 }

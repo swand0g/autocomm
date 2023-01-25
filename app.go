@@ -11,7 +11,16 @@ import (
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
+	var spinCmd tea.Cmd
+	var cmds []tea.Cmd = []tea.Cmd{}
+
+	// Handle async messages first
+	switch msg := msg.(type) {
+		case asyncMsg:
+			m.count = msg.count
+			// m.fetching = false
+			cmds = append(cmds, receiveMessage(m.channel))
+	}
 
 	switch m.appstate {
 		case Choosing: {
@@ -50,9 +59,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					
 		
 				default:
-					m.spinner, cmd = m.spinner.Update(msg)
-					return m, cmd
+					m.spinner, spinCmd = m.spinner.Update(msg)
+					cmds = append(cmds, spinCmd)
 			}
+			
+			return m, tea.Batch(cmds...)
 		}
 		
 		case Authenticating: {
@@ -69,7 +80,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 			}
 
-			m.textInput, cmd = m.textInput.Update(msg)
+			m.textInput, spinCmd = m.textInput.Update(msg)
 			m.textInput.Focus()
 			break
 		}
@@ -103,8 +114,17 @@ func (m model) View() string {
 	return v
 }
 
+func receiveMessage(c chan asyncMsg) tea.Cmd {
+	return func() tea.Msg {
+		return asyncMsg(<-c)
+	}
+}
+
 func (m model) Init() tea.Cmd {
-	return m.spinner.Tick
+	return tea.Batch(
+		m.spinner.Tick,
+		receiveMessage(m.channel),
+	)
 }
 
 func InitalModel() model {
@@ -134,6 +154,7 @@ func InitalModel() model {
 		selected: make(map[int]struct{}),
 		maxTokens: 100,
 		useConventional: false,
+		channel: make(chan asyncMsg),
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),
@@ -166,7 +187,7 @@ func InitalModel() model {
 		textInput: ti,
 		// app state
 		appstate: appstate,
-		fetching: false,
+		fetching: true,
 		fetchError: false,
 	}
 }

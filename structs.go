@@ -13,6 +13,8 @@ type model struct {
 	selected 	map[int]struct{}
 	help 		  help.Model
 	keymap 		keymap
+	channel	    chan asyncMsg
+	count int
 
 	apiKey 				string
 	authenticated bool
@@ -26,6 +28,8 @@ type model struct {
 
 	spinner  	spinner.Model
 	textInput textinput.Model
+
+	fet bool
 }
 
 type keymap struct {
@@ -35,6 +39,11 @@ type keymap struct {
 	Down 						key.Binding
 	Authenticate 		key.Binding
 	Escape 					key.Binding
+}
+
+type asyncMsg struct {
+	choices []string
+	count   int
 }
 
 const (

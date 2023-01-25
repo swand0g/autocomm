@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/lipgloss"
 )
 
 func (m model) HelpView() string {
@@ -47,14 +48,35 @@ func (m model) AuthenticatingView() string {
 	return fmt.Sprintf("\n%s %s  %s\n", m.spinner.View(), prompt, ti)
 }
 
+// func listenForActivity(sub chan struct{}) tea.Cmd {
+// 	return func() tea.Msg {
+// 		for {
+// 			time.Sleep(time.Millisecond * time.Duration(rand.Int63n(900)+100))
+// 			sub <- struct{}{}
+// 		}
+// 	}
+// }
+
+func (m model) f() {
+	time.Sleep(time.Second * 1)
+	m.channel <- asyncMsg{ count: m.count + 1 }
+}
+
 func (m model) ChooseView() string {
-	if len(m.choices) == 0 && !m.fetching && !m.fetchError {
+	if len(m.choices) == 0 && !m.fetchError {
 		if !m.fetching {
 			// todo: rip my grant lmao this ran like a million requests
 			// go m.getCommitSuggestions()
 			// m.fetching = true
+
+			// m.fetching = true
 		}
-		fs := fmt.Sprintf("\n%s %s\n", m.spinner.View(), "Fetching commit messages...")
+
+		if m.fetching {
+			go m.f()
+		}
+
+		fs := fmt.Sprintf("\n%s %s: %d\n", m.spinner.View(), "Fetching commit messages...", m.count)
 		return fs
 	} else if m.fetchError {
 		es := fmt.Sprintf("%s", "Error fetching commit messages! Check your API key and try again.")

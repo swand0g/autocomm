@@ -33,7 +33,7 @@ func req() tea.Msg {
 
 	r := strings.Replace(string(body), "\n", "", -1)
 	log.Println("fetched: ", r)
-	return requestStrResponse{r}
+	return requestStrArrResponse{[]string{r}}
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -43,6 +43,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Handle async messages first
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
+			log.Printf("got response: %v", msg.data)
 			m.choices = msg.data
 			m.fetching = false
 		case requestError:

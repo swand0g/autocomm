@@ -23,7 +23,7 @@ func (m model) HelpView() string {
 			break
 		case Authenticating:
 			esc := m.keymap.Escape
-			esc.SetHelp(HelpText("esc"), "go back")
+			esc.SetHelp(helpText("esc"), "go back")
 
 			keys = []key.Binding{
 				esc,

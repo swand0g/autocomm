@@ -45,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Handle async messages first
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
-			log.Printf("got response: %v", msg.data)
+			logi("got response in update: %v", msg.data)
 			m.choices = msg.data
 			m.fetching = false
 		case requestError:
@@ -57,7 +57,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case Choosing: {
 			if len(m.choices) == 0 && !m.fetching && !m.fetchError {
 				m.fetching = true
-				cmds = append(cmds, m.getCommitSuggestions)
+				// cmds = append(cmds, m.getCommitSuggestions)
+				cmds = append(cmds, req)
 			}
 
 			switch msg := msg.(type) {
@@ -194,27 +195,27 @@ func InitalModel() model {
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),
-				key.WithHelp(HelpText("q"), "quit"),
+				key.WithHelp(helpText("q"), "quit"),
 			),
 			Escape: key.NewBinding(
 				key.WithKeys("esc"),
-				key.WithHelp(HelpText("esc"), "escape"),
+				key.WithHelp(helpText("esc"), "escape"),
 			),
 			Enter: key.NewBinding(
 				key.WithKeys("enter", " "),
-				key.WithHelp(HelpText("enter"), "select"),
+				key.WithHelp(helpText("enter"), "select"),
 			),
 			Up: key.NewBinding(
 				key.WithKeys("up", "k"),
-				key.WithHelp(HelpText("↑/k"), "up"),
+				key.WithHelp(helpText("↑/k"), "up"),
 			),
 			Down: key.NewBinding(
 				key.WithKeys("down", "j"),
-				key.WithHelp(HelpText("↓/j"), "down"),
+				key.WithHelp(helpText("↓/j"), "down"),
 			),
 			Authenticate: key.NewBinding(
 				key.WithKeys("a"),
-				key.WithHelp(HelpText("a"), "set auth"),
+				key.WithHelp(helpText("a"), "set auth"),
 			),
 		},
 		// views & components

@@ -7,8 +7,9 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
-	"strings"
 	"regexp"
+	"runtime"
+	"strings"
 	"time"
 )
 
@@ -17,6 +18,15 @@ func todo(params ...string) {
 		fmt.Println("todo!")
 	} else {
 		fmt.Printf("todo! %s", strings.Join(params, ", "))
+	}
+}
+
+func logi(format string, v ...interface{}) {
+	_, file, line, ok := runtime.Caller(1)
+	fileInfo := strings.Split(file, "/")
+    fileName := fileInfo[len(fileInfo)-1]
+	if ok {
+		log.Printf("[%s:%d] %s", fileName, line, fmt.Sprintf(format, v...))
 	}
 }
 

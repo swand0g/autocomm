@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -39,7 +37,7 @@ var colors = Color{
 	Gold:    "#ffd700",
 }
 
-func HelpText(s string) string {
+func helpText(s string) string {
 	return lipgloss.NewStyle().
 		Italic(true).
 		Bold(true).
@@ -59,7 +57,7 @@ func (m model) quitApp() (tea.Model, tea.Cmd) {
 func (m model) getCommitSuggestions() tea.Msg {
 	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
 	
-	log.Printf("res for getCommitSuggestions(): %v", struct{ data []string; err string; apikey string; useConventional bool }{
+	logi("res for getCommitSuggestions(): %v", struct{ data []string; err string; apikey string; useConventional bool }{
 		data: data,
 		err: err.Error(),
 		apikey: m.apiKey,

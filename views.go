@@ -49,14 +49,14 @@ func (m model) AuthenticatingView() string {
 
 func (m model) ChooseView() string {
 	if len(m.choices) == 0 && !m.fetchError {
-		fs := fmt.Sprintf("\n%s %s: %d\n", m.spinner.View(), "Fetching commit messages...", m.count)
+		fs := fmt.Sprintf("\n%s %s\n", m.spinner.View(), "Fetching commit messages...")
 		return fs
 	} else if m.fetchError {
 		es := fmt.Sprintf("%s", "Error fetching commit messages! Check your API key and try again.")
 		return es 
 	}
 
-	s := ""
+	s := "\n"
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {

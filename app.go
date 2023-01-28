@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -17,6 +18,7 @@ import (
 )
 
 func req() tea.Msg {
+	time.Sleep(5 * time.Second)
 	url := "https://jsonplaceholder.typicode.com/todos/1"
 	resp, err := http.Get(url)
 	if err != nil {
@@ -44,7 +46,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
 			log.Printf("got response: %v", msg.data)
-			m.choices = msg.data
+			m.choices = []string{"potato", msg.data[0], "tomato", "banana"}
 			m.fetching = false
 		case requestError:
 			m.fetchError = true

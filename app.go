@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -35,8 +36,9 @@ func req() tea.Msg {
 			return reqErr{err}
 	}
 
-	log.Println("fetched: ", string(body))
-	return reqRes(string(body))
+	r := strings.Replace(string(body), "\n", "", -1)
+	log.Println("fetched: ", r)
+	return reqRes(r)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

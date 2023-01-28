@@ -20,3 +20,4 @@ go.work
 # Other
 autocomm
 .DS_Store
+*.log

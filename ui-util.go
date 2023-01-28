@@ -37,23 +37,21 @@ var colors = Color{
 	Gold:    "#ffd700",
 }
 
-func helpText(s string) string {
+/* Components */
+func HelpText(s string) string {
 	return lipgloss.NewStyle().
 		Italic(true).
 		Bold(true).
 		Render(s)
 }
 
-func textWithColor(s string, color string) string {
+func TextWithColor(s string, color string) string {
 	return lipgloss.NewStyle().
 		Foreground(lipgloss.Color(color)).
 		Render(s)
 }
 
-func (m model) quitApp() (tea.Model, tea.Cmd) {
-	return m, tea.Quit
-}
-
+/* Misc */
 func (m model) getCommitSuggestions() tea.Msg {
 	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
 	

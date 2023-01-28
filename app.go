@@ -195,27 +195,27 @@ func InitalModel() model {
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),
-				key.WithHelp(helpText("q"), "quit"),
+				key.WithHelp(HelpText("q"), "quit"),
 			),
 			Escape: key.NewBinding(
 				key.WithKeys("esc"),
-				key.WithHelp(helpText("esc"), "escape"),
+				key.WithHelp(HelpText("esc"), "escape"),
 			),
 			Enter: key.NewBinding(
 				key.WithKeys("enter", " "),
-				key.WithHelp(helpText("enter"), "select"),
+				key.WithHelp(HelpText("enter"), "select"),
 			),
 			Up: key.NewBinding(
 				key.WithKeys("up", "k"),
-				key.WithHelp(helpText("↑/k"), "up"),
+				key.WithHelp(HelpText("↑/k"), "up"),
 			),
 			Down: key.NewBinding(
 				key.WithKeys("down", "j"),
-				key.WithHelp(helpText("↓/j"), "down"),
+				key.WithHelp(HelpText("↓/j"), "down"),
 			),
 			Authenticate: key.NewBinding(
 				key.WithKeys("a"),
-				key.WithHelp(helpText("a"), "set auth"),
+				key.WithHelp(HelpText("a"), "set auth"),
 			),
 		},
 		// views & components

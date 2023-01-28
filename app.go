@@ -16,29 +16,24 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type (
-	reqRes string
-	reqErr struct{ err error }
-)
-
 func req() tea.Msg {
 	url := "https://jsonplaceholder.typicode.com/todos/1"
 	resp, err := http.Get(url)
 	if err != nil {
 			fmt.Println(err)
-			return reqErr{err}
+			return requestError{err}
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 			fmt.Println(err)
-			return reqErr{err}
+			return requestError{err}
 	}
 
 	r := strings.Replace(string(body), "\n", "", -1)
 	log.Println("fetched: ", r)
-	return reqRes(r)
+	return requestStrResponse{r}
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -47,10 +42,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// Handle async messages first
 	switch msg := msg.(type) {
-		case reqRes:
-			m.choices = []string{string(msg)}
+		case requestStrArrResponse:
+			m.choices = msg.data
 			m.fetching = false
-		case reqErr:
+		case requestError:
 			m.fetchError = true
 			m.fetching = false
 	}

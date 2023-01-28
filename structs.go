@@ -46,6 +46,12 @@ type asyncMsg struct {
 	count   int
 }
 
+type (
+	requestStrResponse 		struct{ data string }
+	requestStrArrResponse struct{ data []string }
+	requestError		 	 		struct{ err error }
+)
+
 const (
 	Choosing 				= iota
 	Authenticating 	= iota

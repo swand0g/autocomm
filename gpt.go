@@ -15,7 +15,7 @@ func fetchAiResponse(apiKey string, prompt string) (string, error) {
 	c := gogpt.NewClient(apiKey)
 	ctx := context.Background()
 	req := gogpt.CompletionRequest{
-		Model: gogpt.GPT3TextDavinci003,
+		Model: gogpt.GPT3Ada,
 		MaxTokens: 20,
 		Prompt: prompt,
 	}

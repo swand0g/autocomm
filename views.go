@@ -38,7 +38,7 @@ func (m model) HelpView() string {
 
 func (m model) QuitView() string {
 	peaceOutMsg := randGoodbyeMessage()
-	return fmt.Sprintf("\n%s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render(peaceOutMsg))
+	return fmt.Sprintf("\n%s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color(colors.Purple)).Render(peaceOutMsg))
 }
 
 func (m model) AuthenticatingView() string {
@@ -49,11 +49,11 @@ func (m model) AuthenticatingView() string {
 
 func (m model) ChooseView() string {
 	if len(m.choices) == 0 && !m.fetchError {
-		fs := fmt.Sprintf("\n%s %s\n", m.spinner.View(), "Fetching commit messages...")
-		return fs
+		fs := fmt.Sprintf("%s %s", m.spinner.View(), "Fetching commit messages...")
+		return  "\n" + fs + "\n"
 	} else if m.fetchError {
-		es := fmt.Sprintf("%s", "Error fetching commit messages! Check your API key and try again.")
-		return es 
+		es := fmt.Sprintf("%s %s", textWithColor("Error fetching commit messages!", colors.Red), "Check your API key and try again.")
+		return "\n" + es + "\n"
 	}
 
 	s := "\n"
@@ -61,7 +61,6 @@ func (m model) ChooseView() string {
 		cursor := " "
 		if m.cursor == i {
 			cursor = ">" //cursor!
-			// cursor = m.spinner.View()
 		}
 
 		checked := " "

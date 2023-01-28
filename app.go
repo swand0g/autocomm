@@ -18,7 +18,7 @@ import (
 )
 
 func req() tea.Msg {
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
 	url := "https://jsonplaceholder.typicode.com/todos/1"
 	resp, err := http.Get(url)
 	if err != nil {
@@ -46,7 +46,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
 			log.Printf("got response: %v", msg.data)
-			m.choices = []string{"potato", msg.data[0], "tomato", "banana"}
+			m.choices = msg.data
 			m.fetching = false
 		case requestError:
 			m.fetchError = true
@@ -55,9 +55,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch m.appstate {
 		case Choosing: {
-			if len(m.choices) == 0 && !m.fetching {
+			if len(m.choices) == 0 && !m.fetching && !m.fetchError {
 				m.fetching = true
-				cmds = append(cmds, req)
+				cmds = append(cmds, m.getCommitSuggestions)
 			}
 
 			switch msg := msg.(type) {

@@ -2,35 +2,20 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m model) debugRequest() {
-	url := "https://jsonplaceholder.typicode.com/todos/1"
-	resp, err := http.Get(url)
-	if err != nil {
-			fmt.Println(err)
-			return
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-			fmt.Println(err)
-			return
-	}
-
-	fmt.Printf("\n\n%s\n\n", string(body))
-	m.choices = []string{string(body)}
-	m.fetching = false
-}
-
+var netsema = make(chan struct{}, 1)
 
 func main() {
+	os.Setenv("DEBUG", "1")
+	f := setupLogging()
+	if f != nil {
+		defer f.Close()
+	}
+
 	p := tea.NewProgram(InitalModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
@@ -38,7 +23,19 @@ func main() {
 	}
 }
 
-func main3() {
+func setupLogging() *os.File {
+	if len(os.Getenv("DEBUG")) > 0 {
+		f, err := tea.LogToFile("debug.log", "debug")
+		if err != nil {
+			fmt.Println("fatal:", err)
+			os.Exit(1)
+		}
+		return f
+	}
+	return nil
+}
+
+func printCommitSugestionsAs() {
 	k, _ := getAPIKey()
 	
 	s, e := fetchCommitSuggestions(k, false)

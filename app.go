@@ -1,6 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -10,20 +15,51 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+type (
+	reqRes string
+	reqErr struct{ err error }
+)
+
+func req() tea.Msg {
+	url := "https://jsonplaceholder.typicode.com/todos/1"
+	resp, err := http.Get(url)
+	if err != nil {
+			fmt.Println(err)
+			return reqErr{err}
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+			fmt.Println(err)
+			return reqErr{err}
+	}
+
+	log.Println("fetched: ", string(body))
+	return reqRes(string(body))
+}
+
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var spinCmd tea.Cmd
 	var cmds []tea.Cmd = []tea.Cmd{}
 
 	// Handle async messages first
 	switch msg := msg.(type) {
-		case asyncMsg:
-			m.count = msg.count
-			// m.fetching = false
-			cmds = append(cmds, receiveMessage(m.channel))
+		case reqRes:
+			m.choices = []string{string(msg)}
+			m.fetching = false
+		case reqErr:
+			m.fetchError = true
+			m.fetching = false
 	}
 
 	switch m.appstate {
 		case Choosing: {
+			if len(m.choices) == 0 && !m.fetching {
+				m.fetching = true
+				cmds = append(cmds, req)
+			}
+
 			switch msg := msg.(type) {
 				case tea.KeyMsg:
 					switch {
@@ -187,7 +223,7 @@ func InitalModel() model {
 		textInput: ti,
 		// app state
 		appstate: appstate,
-		fetching: true,
+		fetching: false,
 		fetchError: false,
 	}
 }

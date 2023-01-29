@@ -56,10 +56,14 @@ func TextWithColor(s string, color string) string {
 /* Misc */
 func (m model) getCommitSuggestions() tea.Msg {
 	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
 	
 	logi("res for getCommitSuggestions(): %v", struct{ data []string; err string; apikey string; useConventional bool }{
 		data: data,
-		err: err.Error(),
+		err: errStr,
 		apikey: m.apiKey,
 		useConventional: m.useConventional,
 	})

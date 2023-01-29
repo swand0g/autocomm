@@ -19,6 +19,7 @@ func (m model) HelpView() string {
 				m.keymap.Down,
 				m.keymap.Enter,
 				m.keymap.Authenticate,
+				m.keymap.Retry,
 			)
 			break
 		case Authenticating:
@@ -48,7 +49,7 @@ func (m model) AuthenticatingView() string {
 }
 
 func (m model) ChooseView() string {
-	if len(m.choices) == 0 && !m.fetchError {
+	if len(m.choices) == 0 && !m.fetchError && m.fetching {
 		fs := fmt.Sprintf("%s %s", m.spinner.View(), "Fetching commit messages...")
 		return  "\n" + fs + "\n"
 	} else if m.fetchError {
@@ -61,15 +62,9 @@ func (m model) ChooseView() string {
 		cursor := " "
 		if m.cursor == i {
 			cursor = ">" //cursor!
-			cursor = m.spinner.View()
 		}
 
-		checked := " "
-		if _, ok := m.selected[i]; ok {
-			checked = "x" // selected!
-		}
-
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+		s += fmt.Sprintf("%s %s\n", cursor, choice)
 	}
 	return s
 }

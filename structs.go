@@ -44,6 +44,7 @@ type keymap struct {
 	Down 						key.Binding
 	Authenticate 		key.Binding
 	Escape 					key.Binding
+	Retry 					key.Binding
 }
 
 type (

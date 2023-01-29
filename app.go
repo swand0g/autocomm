@@ -51,7 +51,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
 			logi("GOT RES IN UPDATE(msg): %v", msg.data)
-			m.choices = []string{msg.data[0], "two", "three"}
+			m.choices = msg.data
 			m.fetching = false
 			break
 		case requestError:
@@ -73,8 +73,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case Choosing: {
 			if len(m.choices) == 0 && !m.fetching && !m.fetchError {
 				m.fetching = true
-				// cmds = append(cmds, m.getCommitSuggestions)
-				cmds = append(cmds, req)
+				cmds = append(cmds, m.getCommitSuggestions)
+				// cmds = append(cmds, req)
 			}
 
 			switch msg := msg.(type) {
@@ -97,6 +97,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 								m.cursor++
 							} else {
 								m.cursor = 0
+							}
+							break
+
+						case key.Matches(msg, m.keymap.Retry):
+							if !m.fetching {
+								m.fetchError = false
+								m.choices = []string{}
 							}
 							break
 
@@ -133,10 +140,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case tea.KeyMsg:
 					switch {
 						case key.Matches(msg, m.keymap.Escape):
+							m.textInput.Reset()
 							m.appstate = Choosing
 							break
 						case key.Matches(msg, m.keymap.Enter):
-							saveAPIKey(m.textInput.Value())
+							key := m.textInput.Value()
+							saveAPIKey(key)
+							m.apiKey = key
+							m.fetchError = false
+							m.choices = []string{}
+							m.textInput.Reset()
 							m.appstate = Choosing
 							break
 					}
@@ -213,7 +226,7 @@ func InitalModel() model {
 	ti := textinput.New()
 	ti.Placeholder = "Super secret API key"
 	ti.CharLimit = 64
-	ti.Width = 20
+	ti.Width = 64
 
 	h := help.NewModel()
 
@@ -248,6 +261,10 @@ func InitalModel() model {
 			Authenticate: key.NewBinding(
 				key.WithKeys("a"),
 				key.WithHelp(HelpText("a"), "set auth"),
+			),
+			Retry: key.NewBinding(
+				key.WithKeys("r"),
+				key.WithHelp(HelpText("r"), "retry"),
 			),
 		},
 		// views & components

@@ -39,18 +39,34 @@ func req() tea.Msg {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var spinCmd tea.Cmd
-	var cmds []tea.Cmd = []tea.Cmd{}
+	var (
+		cmds = []tea.Cmd{}
+		spinCmd tea.Cmd
+	)
+
+	m.spinner, spinCmd = m.spinner.Update(msg)
+	cmds = append(cmds, spinCmd)
 
 	// Handle async messages first
 	switch msg := msg.(type) {
 		case requestStrArrResponse:
-			logi("got response in update: %v", msg.data)
-			m.choices = msg.data
+			logi("GOT RES IN UPDATE(msg): %v", msg.data)
+			m.choices = []string{msg.data[0], "two", "three"}
 			m.fetching = false
+			break
 		case requestError:
 			m.fetchError = true
 			m.fetching = false
+			break
+		case commitResult:
+			if msg.err != nil {
+				m.commitState.err = msg.err
+			} else {
+				m.commitState.committed = true
+				m.commitState.committing = false
+				m.commitState.commitOutput = msg.output
+			}
+			break
 	}
 
 	switch m.appstate {
@@ -67,43 +83,52 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
 							m.appstate = Quitting
 							return m, tea.Quit
-		
+
 						case key.Matches(msg, m.keymap.Up):
 							if m.cursor > 0 {
 								m.cursor--
 							} else {
 								m.cursor = len(m.choices) - 1
 							}
-		
+							break
+
 						case key.Matches(msg, m.keymap.Down):
 							if m.cursor < len(m.choices) - 1 {
 								m.cursor++
 							} else {
 								m.cursor = 0
 							}
-		
+							break
+
 						case key.Matches(msg, m.keymap.Enter):
+							logi("selected: %v", m.choices[m.cursor])
 							_, ok := m.selected[m.cursor]
 							if ok {
 								delete(m.selected, m.cursor)
 							} else {
 								m.selected[m.cursor] = struct{}{}
 							}
-						
+
+							cmtMsg := m.choices[m.cursor]
+							m.commitState.committing = true
+							m.commitState.chosenMsg = cmtMsg
+							m.appstate = Committing
+							cmds = append(cmds, m.commitWithMsg)
+							break
+
 						case key.Matches(msg, m.keymap.Authenticate):
 							m.appstate = Authenticating
+							break
 					}
-					
-		
+
 				default:
-					m.spinner, spinCmd = m.spinner.Update(msg)
-					cmds = append(cmds, spinCmd)
+					break
 			}
-			
-			return m, tea.Batch(cmds...)
 		}
-		
+
 		case Authenticating: {
+			var textInputCmd tea.Cmd
+
 			switch msg := msg.(type) {
 				case tea.KeyMsg:
 					switch {
@@ -117,16 +142,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 			}
 
-			m.textInput, spinCmd = m.textInput.Update(msg)
+			m.textInput, textInputCmd = m.textInput.Update(msg)
+			cmds = append(cmds, textInputCmd)
+
 			m.textInput.Focus()
 			break
 		}
-		
+
+		case Committing:
+			if m.commitState.err != nil || m.commitState.committed {
+				return m, tea.Quit
+			}
+			break
+
 		default:
 			break
 	}
 
-	return m, nil
+	return m, tea.Batch(cmds...)
 }
 
 func (m model) View() string {
@@ -140,6 +173,13 @@ func (m model) View() string {
 			v += m.AuthenticatingView()
 			break
 
+		case Committing:
+			v += m.CommitView()
+			if (m.commitState.committed) {
+				return v
+			}
+			break
+
 		case Choosing:
 			fallthrough
 		default:
@@ -151,16 +191,9 @@ func (m model) View() string {
 	return v
 }
 
-func receiveMessage(c chan asyncMsg) tea.Cmd {
-	return func() tea.Msg {
-		return asyncMsg(<-c)
-	}
-}
-
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
 		m.spinner.Tick,
-		receiveMessage(m.channel),
 	)
 }
 
@@ -177,12 +210,12 @@ func InitalModel() model {
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 
-	h := help.NewModel()
-
 	ti := textinput.New()
 	ti.Placeholder = "Super secret API key"
 	ti.CharLimit = 64
 	ti.Width = 20
+
+	h := help.NewModel()
 
 	return model{
 		apiKey: apiKey,
@@ -191,7 +224,6 @@ func InitalModel() model {
 		selected: make(map[int]struct{}),
 		maxTokens: 100,
 		useConventional: false,
-		channel: make(chan asyncMsg),
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),
@@ -226,5 +258,13 @@ func InitalModel() model {
 		appstate: appstate,
 		fetching: false,
 		fetchError: false,
+		// substates
+		commitState: commitState{
+			chosenMsg: "",
+			committed: false,
+			committing: false,
+			commitOutput: "",
+			err: nil,
+		},
 	}
 }

@@ -13,23 +13,28 @@ type model struct {
 	selected 	map[int]struct{}
 	help 		  help.Model
 	keymap 		keymap
-	channel	    chan asyncMsg
-	count int
 
 	apiKey 				string
 	authenticated bool
 
-	appstate int
-	
 	fetching 	 			bool
 	fetchError 			bool
 	maxTokens 			int
 	useConventional bool
 
+	appstate 		int
+	commitState commitState
+
 	spinner  	spinner.Model
 	textInput textinput.Model
+}
 
-	fet bool
+type commitState struct {
+	chosenMsg  	 string
+	committed  	 bool
+	committing 	 bool
+	commitOutput string
+	err        	 error
 }
 
 type keymap struct {
@@ -41,19 +46,20 @@ type keymap struct {
 	Escape 					key.Binding
 }
 
-type asyncMsg struct {
-	choices []string
-	count   int
-}
-
 type (
 	requestStrResponse 		struct{ data string }
 	requestStrArrResponse struct{ data []string }
 	requestError		 	 		struct{ err error }
+
+	commitResult struct{
+		output string
+		err		 error
+	}
 )
 
 const (
 	Choosing 				= iota
 	Authenticating 	= iota
 	Quitting 				= iota
+	Committing 			= iota
 )

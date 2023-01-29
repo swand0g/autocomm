@@ -61,6 +61,7 @@ func (m model) ChooseView() string {
 		cursor := " "
 		if m.cursor == i {
 			cursor = ">" //cursor!
+			cursor = m.spinner.View()
 		}
 
 		checked := " "
@@ -71,4 +72,16 @@ func (m model) ChooseView() string {
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
 	return s
+}
+
+func (m model) CommitView() string {
+	if m.commitState.err != nil {
+		return fmt.Sprintf("\n%s %s\n\n", TextWithColor("Error committing!", colors.Red), m.commitState.err)
+	}
+
+	if m.commitState.committed {
+		return m.commitState.commitOutput
+	}
+
+	return fmt.Sprintf("\n%s %s\n\n", m.spinner.View(), "Committing...")
 }

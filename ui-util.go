@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os/exec"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -64,4 +66,10 @@ func (m model) getCommitSuggestions() tea.Msg {
 
 	if err != nil { return requestError{err} }
 	return requestStrArrResponse{data}
+}
+
+func (m model) commitWithMsg() tea.Msg {
+	cmd := exec.Command("git", "commit", "-m", m.commitState.chosenMsg)
+	out, _ := cmd.CombinedOutput()
+	return commitResult{string(out), nil}
 }

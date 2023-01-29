@@ -46,7 +46,7 @@ func randGoodbyeMessage() string {
 }
 
 func gitDiff() (string, error) {
-	out, err := exec.Command("git", "diff").Output()
+	out, err := exec.Command("git", "diff", "--cached").Output()
 	if err != nil {
 			log.Fatal(err)
 			return "", err

@@ -7,7 +7,7 @@ import (
 	gogpt "github.com/sashabaranov/go-gpt3"
 )
 
-const PROMPT = 
+const PROMPT =
 	"Suggest %d good commit messages for my commit%s:" + 
 	"```\n"	+ "%s" + "```\n"
 
@@ -34,11 +34,11 @@ func fetchCommitSuggestions(apiKey string, conventional bool) ([]string, error) 
 	if conventional {
 		cs = " in conventional commit format (type(scope): subject)"
 	}
-
+  
 	fullPrompt := fmt.Sprintf(PROMPT, 5, cs, diff)
 	res, err := fetchAiResponse(apiKey, fullPrompt)
 	if err != nil { return []string{}, err }
-	
+  
 	s := cleanLines(res)
 	return s, nil
 }

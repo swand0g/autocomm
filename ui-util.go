@@ -2,6 +2,7 @@ package main
 
 import (
 	"os/exec"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -55,6 +56,11 @@ func TextWithColor(s string, color string) string {
 
 /* Misc */
 func (m model) getCommitSuggestions() tea.Msg {
+	if environment.DRY {
+		time.Sleep(500 * time.Millisecond)
+		return requestStrArrResponse{DRY_COMMIT_SUGGESTIONS}
+	}
+
 	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
 	errStr := ""
 	if err != nil {

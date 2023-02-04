@@ -80,11 +80,11 @@ func readFromFile(fileName string) (string, error) {
 }
 
 func saveAPIKey(token string) bool {
-	return writeToFile(token, ConfigFileName)
+	return writeToFile(token, CONFIG_FILE_NAME)
 }
 
 func getAPIKey() (string, error) {
-	return readFromFile(ConfigFileName)
+	return readFromFile(CONFIG_FILE_NAME)
 }
 
 func cleanLines(str string) []string {

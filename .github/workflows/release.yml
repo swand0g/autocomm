@@ -34,13 +34,13 @@ jobs:
           fi
 
       - name: Build
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./bin/${{ env.BIN_NAME }} -ldflags "-s -w" ./...
+        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./bin/ -ldflags "-s -w" ./...
 
       - name: Archive binaries
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.BIN_NAME }}.zip
-          path: ./bin/${{ env.BIN_NAME }}
+          path: ./bin/autocomm
   
   build-macos:
     name: Build MacOS
@@ -65,6 +65,7 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
+    if: false
     steps:
       - uses: actions/checkout@v3
 
@@ -84,12 +85,22 @@ jobs:
 
   release:
     name: Release
-    needs: [build-linux, build-macos, build-windows]
+    # needs: [build-linux, build-macos, build-windows]
+    needs: [build-linux, build-macos]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
         with:
           path: ./bin
+
+      - name: Zip binaries
+        run: |
+          for file in ./bin/*.zip; do
+            zip -rj "${file}" "${file%.*}"
+          done
+
+      - name: List files
+        run: ls -R
 
       - uses: softprops/action-gh-release@v1
         with:
@@ -97,8 +108,8 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           generate_release_notes: true
           files: |
-            ./bin/autocomm-linux.zip/autocomm-linux
-            ./bin/autocomm-arm32.zip/autocomm-arm32
-            ./bin/autocomm-arm64.zip/autocomm-arm64
-            ./bin/autocomm-macos.zip/autocomm-macos
+            ./bin/autocomm-linux.zip/autocomm
+            ./bin/autocomm-arm32.zip/autocomm
+            ./bin/autocomm-arm64.zip/autocomm
+            ./bin/autocomm-macos.zip/autocomm
             ./bin/autocomm-windows.zip/autocomm-windows

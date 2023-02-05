@@ -40,7 +40,7 @@ jobs:
         with:
           name: ${{ env.BIN_NAME }}
           path: ./bin/${{ env.BIN_NAME }}
-
+  
   build-macos:
     name: Build MacOS
     runs-on: macos-latest
@@ -60,6 +60,23 @@ jobs:
         with:
           name: autocomm-macos
           path: ./bin/autocomm
+  
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
 
-      - name: Test
-        run: go test -v ./...
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Build
+        run: go build -v -o ./bin/ ./...
+
+      - name: Archive binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: autocomm-windows
+          path: ./bin/autocomm

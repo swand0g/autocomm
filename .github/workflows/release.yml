@@ -109,8 +109,8 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           generate_release_notes: true
           files: |
-            ./bin/autocomm-linux.zip
-            ./bin/autocomm-arm32.zip
-            ./bin/autocomm-arm64.zip
-            ./bin/autocomm-macos.zip
-            ./bin/autocomm-windows.zip
+            autocomm-linux.zip
+            autocomm-arm32.zip
+            autocomm-arm64.zip
+            autocomm-macos.zip
+            autocomm-windows.zip

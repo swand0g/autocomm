@@ -65,7 +65,6 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
-    if: false
     steps:
       - uses: actions/checkout@v3
 

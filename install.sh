@@ -63,7 +63,6 @@ set_download_file_name() {
     esac
   elif [ "$OS" = "Darwin" ] && [ "$FORCE_INSTALL" = "true" ]; then
     FILENAME="autocomm-macos"
-    USE_HOMEBREW="false"
     echo "Downloading the latest autocomm binary from GitHub..."
   else
     echo "OS $OS is not supported."
@@ -74,9 +73,9 @@ set_download_file_name() {
 
 download_autocomm() {
   if [ "$RELEASE" = "latest" ]; then
-    URL="https://github.com/Schniz/fnm/releases/latest/download/$FILENAME.zip"
+    URL="https://github.com/swand0g/autocomm/releases/latest/download/$FILENAME.zip"
   else
-    URL="https://github.com/Schniz/fnm/releases/download/$RELEASE/$FILENAME.zip"
+    URL="https://github.com/swand0g/autocomm/releases/download/$RELEASE/$FILENAME.zip"
   fi
 
   DOWNLOAD_DIR=$(mktemp -d)

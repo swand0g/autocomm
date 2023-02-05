@@ -26,6 +26,8 @@ jobs:
         run: |
           if [ "${{ matrix.arch }}" == "amd64" ]; then
             echo "BIN_NAME=autocomm-linux" >> $GITHUB_ENV
+          elif [ "${{ matrix.arch }}" == "arm" ]; then
+            echo "BIN_NAME=autocomm-arm32" >> $GITHUB_ENV
           else
             echo "BIN_NAME=autocomm-${{ matrix.arch }}" >> $GITHUB_ENV
           fi

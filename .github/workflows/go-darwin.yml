@@ -24,8 +24,9 @@ jobs:
 
     - name: Archive binaries
       uses: actions/upload-artifact@v3
-      name: autocomm-macos
-      path: ./bin/autocomm
+      with:
+        name: autocomm-macos
+        path: ./bin/autocomm
 
     - name: Test
       run: go test -v ./...

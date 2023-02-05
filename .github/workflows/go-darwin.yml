@@ -1,4 +1,4 @@
-name: Go Darwin
+name: Go All
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 jobs:
 
   build:
+    name: Build MacOS
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,7 +20,12 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: go build -v ./...
+      run: go build -v -o ./bin/ ./...
+
+    - name: Archive binaries
+      uses: actions/upload-artifact@v3
+      name: autocomm-macos
+      path: ./bin/autocomm
 
     - name: Test
       run: go test -v ./...

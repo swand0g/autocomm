@@ -95,9 +95,10 @@ jobs:
 
       - name: Zip binaries
         run: |
-          for file in ./bin/*.zip; do
-            zip -rj "${file}" "${file%.*}"
-          done
+          zip autocomm-linux.zip ./bin/autocomm-linux.zip/autocomm
+          zip autocomm-arm32.zip ./bin/autocomm-arm32.zip/autocomm
+          zip autocomm-arm64.zip ./bin/autocomm-arm64.zip/autocomm
+          zip autocomm-macos.zip ./bin/autocomm-macos.zip/autocomm
 
       - name: List files
         run: ls -R
@@ -108,8 +109,8 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           generate_release_notes: true
           files: |
-            ./bin/autocomm-linux.zip/autocomm
-            ./bin/autocomm-arm32.zip/autocomm
-            ./bin/autocomm-arm64.zip/autocomm
-            ./bin/autocomm-macos.zip/autocomm
-            ./bin/autocomm-windows.zip/autocomm-windows
+            ./bin/autocomm-linux.zip
+            ./bin/autocomm-arm32.zip
+            ./bin/autocomm-arm64.zip
+            ./bin/autocomm-macos.zip
+            ./bin/autocomm-windows.zip

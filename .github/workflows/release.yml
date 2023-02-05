@@ -87,6 +87,10 @@ jobs:
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: ./bin
+      
       - uses: softprops/action-gh-release@v1
         with:
           draft: true

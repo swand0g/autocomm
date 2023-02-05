@@ -65,6 +65,7 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
+    if: false
     steps:
       - uses: actions/checkout@v3
 
@@ -91,17 +92,14 @@ jobs:
         with:
           path: ./bin
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - uses: softprops/action-gh-release@v1
         with:
           draft: true
           token: ${{ secrets.GH_TOKEN }}
           generate_release_notes: true
           files: |
-            ./bin/autocomm-linux.zip
-            ./bin/autocomm-arm32.zip
-            ./bin/autocomm-arm64.zip
-            ./bin/autocomm-macos.zip
-            ./bin/autocomm-windows.zip
+            ./bin/autocomm-linux.zip/autocomm-linux.zip
+            ./bin/autocomm-arm32.zip/autocomm-arm32.zip
+            ./bin/autocomm-arm64.zip/autocomm-arm64.zip
+            ./bin/autocomm-macos.zip/autocomm-macos.zip
+            ./bin/autocomm-windows.zip/autocomm-windows.zip

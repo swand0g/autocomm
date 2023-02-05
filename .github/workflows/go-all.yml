@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.BIN_NAME }}
-          path: ./bin/${{ env.BIN_NAME }}
+          path: ./bin/${{ env.BIN_NAME }}.zip
   
   build-macos:
     name: Build MacOS
@@ -58,7 +58,7 @@ jobs:
       - name: Archive binaries
         uses: actions/upload-artifact@v3
         with:
-          name: autocomm-macos
+          name: autocomm-macos.zip
           path: ./bin/autocomm
   
   build-windows:
@@ -78,5 +78,5 @@ jobs:
       - name: Archive binaries
         uses: actions/upload-artifact@v3
         with:
-          name: autocomm-windows
+          name: autocomm-windows.zip
           path: ./bin/autocomm.exe

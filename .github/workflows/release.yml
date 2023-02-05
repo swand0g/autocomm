@@ -65,7 +65,6 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
-    if: false
     steps:
       - uses: actions/checkout@v3
 
@@ -85,8 +84,7 @@ jobs:
 
   release:
     name: Release
-    # needs: [build-linux, build-macos, build-windows]
-    needs: [build-linux, build-macos]
+    needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
@@ -99,10 +97,8 @@ jobs:
           zip autocomm-arm32.zip ./bin/autocomm-arm32.zip/autocomm
           zip autocomm-arm64.zip ./bin/autocomm-arm64.zip/autocomm
           zip autocomm-macos.zip ./bin/autocomm-macos.zip/autocomm
-
-      - name: List files
-        run: ls -R
-
+          zip autocomm-windows.zip ./bin/autocomm-windows.zip/autocomm.exe
+      
       - uses: softprops/action-gh-release@v1
         with:
           draft: true

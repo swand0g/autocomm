@@ -1,8 +1,7 @@
 set positional-arguments
 config-file := "~/.autocomm"
 
-# This!
-default:
+_default:
   @just -lu --justfile {{justfile()}}
 
 # Print the OpenAI API key being used

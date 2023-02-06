@@ -1,6 +1,12 @@
+config-file := "~/.autocomm"
+
 # This!
 default:
   @just -lu --justfile {{justfile()}}
+
+# Print the OpenAI API key being used
+check-key:
+  @cat {{config-file}}
 
 # Build the app
 build:

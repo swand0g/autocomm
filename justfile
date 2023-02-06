@@ -1,3 +1,4 @@
+set positional-arguments
 config-file := "~/.autocomm"
 
 # This!
@@ -9,8 +10,8 @@ check-key:
   @cat {{config-file}}
 
 # Build the app
-build:
-  @go build -o ./bin/ ./...
+build *args='':
+  @go build -o ./bin/ $@ ./...
 
 # Run the app
 run:

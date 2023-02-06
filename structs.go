@@ -8,59 +8,59 @@ import (
 )
 
 type model struct {
-	choices 	[]string
-	cursor 		int
-	selected 	map[int]struct{}
-	help 		  help.Model
-	keymap 		keymap
+	choices  []string
+	cursor   int
+	selected map[int]struct{}
+	help     help.Model
+	keymap   keymap
 
-	apiKey 				string
+	apiKey        string
 	authenticated bool
 
-	fetching 	 			bool
-	fetchError 			bool
-	maxTokens 			int
+	fetching        bool
+	fetchError      bool
+	maxTokens       int
 	useConventional bool
 
-	appstate 		int
+	appstate    int
 	commitState commitState
 
-	spinner  	spinner.Model
+	spinner   spinner.Model
 	textInput textinput.Model
 }
 
 type commitState struct {
-	chosenMsg  	 string
-	committed  	 bool
-	committing 	 bool
+	chosenMsg    string
+	committed    bool
+	committing   bool
 	commitOutput string
-	err        	 error
+	err          error
 }
 
 type keymap struct {
-	Quit 						key.Binding
-	Enter  					key.Binding
-	Up 							key.Binding
-	Down 						key.Binding
-	Authenticate 		key.Binding
-	Escape 					key.Binding
-	Retry 					key.Binding
+	Quit         key.Binding
+	Enter        key.Binding
+	Up           key.Binding
+	Down         key.Binding
+	Authenticate key.Binding
+	Escape       key.Binding
+	Retry        key.Binding
 }
 
 type (
-	requestStrResponse 		struct{ data string }
+	requestStrResponse    struct{ data string }
 	requestStrArrResponse struct{ data []string }
-	requestError		 	 		struct{ err error }
+	requestError          struct{ err error }
 
-	commitResult struct{
+	commitResult struct {
 		output string
-		err		 error
+		err    error
 	}
 )
 
 const (
-	Choosing 				= iota
-	Authenticating 	= iota
-	Quitting 				= iota
-	Committing 			= iota
+	Choosing       = iota
+	Authenticating = iota
+	Quitting       = iota
+	Committing     = iota
 )

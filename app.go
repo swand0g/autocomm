@@ -22,15 +22,15 @@ func req() tea.Msg {
 	url := "https://jsonplaceholder.typicode.com/todos/1"
 	resp, err := http.Get(url)
 	if err != nil {
-			fmt.Println(err)
-			return requestError{err}
+		fmt.Println(err)
+		return requestError{err}
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-			fmt.Println(err)
-			return requestError{err}
+		fmt.Println(err)
+		return requestError{err}
 	}
 
 	r := strings.Replace(string(body), "\n", "", -1)
@@ -74,6 +74,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.choices) == 0 && !m.fetching && !m.fetchError {
 				m.fetching = true
 				cmds = append(cmds, m.getCommitSuggestions)
+
+				// used for debugging
 				// cmds = append(cmds, req)
 			}
 

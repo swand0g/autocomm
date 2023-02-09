@@ -1,5 +1,6 @@
 set positional-arguments
 config-file := "~/.autocomm"
+install_file := "./install.sh"
 
 _default:
   @just -lu --justfile {{justfile()}}
@@ -11,6 +12,9 @@ check-key:
 # Build the app
 build *args='':
   @go build -o ./bin/ $@ ./...
+
+install *args='':
+  @chmod +x {{install_file}} && {{install_file}} $@
 
 # Run the app
 run:

@@ -98,3 +98,8 @@ func cleanLines(str string) []string {
 	}
 	return lines
 }
+
+func userInGitRepo() bool {
+	_, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
+	return err == nil
+}

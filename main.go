@@ -28,6 +28,11 @@ func setupLogging() *os.File {
 
 // todo: handle exit code error 129 when run in a folder that isnt a git repo
 func main() {
+	if !userInGitRepo() {
+		fmt.Println("This ain't a git repo 🤨")
+		os.Exit(1)
+	}
+
 	environment = env{
 		DEBUG: len(os.Getenv("DEBUG")) > 0,
 		DRY: len(os.Getenv("DRY")) > 0,

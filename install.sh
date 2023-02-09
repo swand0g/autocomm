@@ -172,10 +172,12 @@ setup_shell() {
     echo ""
     echo '  # autocomm'
     echo '  export PATH="'"$INSTALL_DIR"':$PATH"'
+    echo '  alias auto="autocomm"'
 
     echo '' >>$CONF_FILE
     echo '# autocomm' >>$CONF_FILE
     echo 'export PATH="'"$INSTALL_DIR"':$PATH"' >>$CONF_FILE
+    echo 'alias auto="autocomm"' >>$CONF_FILE
 
   else
     echo "Could not infer shell type. Please set up manually."

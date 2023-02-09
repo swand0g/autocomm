@@ -5,6 +5,7 @@ set -e
 
 RELEASE="latest"
 OS="$(uname -s)"
+REPO="swand0g/autocomm"
 
 if [ -d "$HOME/.autocomm" ]; then
   INSTALL_DIR="$HOME/.autocomm"
@@ -61,21 +62,21 @@ set_download_file_name() {
       *)
         FILENAME="autocomm-linux"
     esac
-  elif [ "$OS" = "Darwin" ] && [ "$FORCE_INSTALL" = "true" ]; then
+  elif [ "$OS" = "Darwin" ]; then
     FILENAME="autocomm-macos"
     echo "Downloading the latest autocomm binary from GitHub..."
   else
-    echo "OS $OS is not supported."
-    echo "If you think that's a bug - please file an issue to https://github.com/swand0g/autocomm/issues"
+    echo "OS $OS is not supported!"
+    echo "If you think that's a bug, please file an issue to https://github.com/swand0g/autocomm/issues!"
     exit 1
   fi
 }
 
 download_autocomm() {
   if [ "$RELEASE" = "latest" ]; then
-    URL="https://github.com/swand0g/autocomm/releases/latest/download/$FILENAME.zip"
+    URL="https://github.com/$REPO/releases/latest/download/$FILENAME.zip"
   else
-    URL="https://github.com/swand0g/autocomm/releases/download/$RELEASE/$FILENAME.zip"
+    URL="https://github.com/$REPO/releases/download/$RELEASE/$FILENAME.zip"
   fi
 
   DOWNLOAD_DIR=$(mktemp -d)

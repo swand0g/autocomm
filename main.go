@@ -14,7 +14,6 @@ type env struct {
 
 var environment env
 
-// todo: fix logging when in build mode
 func setupLogging() *os.File {
 	if environment.DEBUG {
 		f, err := tea.LogToFile("debug.log", "debug")

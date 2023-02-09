@@ -15,16 +15,19 @@ import (
 
 func todo(params ...string) {
 	if len(params) == 0 {
-		fmt.Println("todo!")
+		log.Println("todo!")
 	} else {
-		fmt.Printf("todo! %s", strings.Join(params, ", "))
+		log.Printf("todo! %s", strings.Join(params, ", "))
 	}
 }
 
 func logi(format string, v ...interface{}) {
+	if !environment.DEBUG { return }
+
 	_, file, line, ok := runtime.Caller(1)
 	fileInfo := strings.Split(file, "/")
-    fileName := fileInfo[len(fileInfo)-1]
+	fileName := fileInfo[len(fileInfo)-1]
+
 	if ok {
 		log.Printf("[%s:%d] %s", fileName, line, fmt.Sprintf(format, v...))
 	}

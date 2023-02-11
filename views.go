@@ -81,3 +81,18 @@ func (m model) CommitView() string {
 
 	return fmt.Sprintf("\n%s %s\n\n", m.spinner.View(), "Committing...")
 }
+
+func (m model) ChooseAIModelView() string {
+	s := ""
+
+	for i, aiModel := range API_MODELS {
+		cursor := " "
+		if m.cursor == i {
+			cursor = TextWithColor("  >", colors.Purple) //cursor!
+		}
+
+		s += fmt.Sprintf("%s %s\n", cursor, aiModel)
+	}
+
+	return s
+}

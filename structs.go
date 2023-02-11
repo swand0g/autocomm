@@ -11,20 +11,22 @@ type model struct {
 	choices  []string
 	cursor   int
 	selected map[int]struct{}
-	help     help.Model
 	keymap   keymap
+	
+	maxTokens       int
+	aiModel 			 	string
+	useConventional bool
 
 	apiKey        string
 	authenticated bool
 
-	fetching        bool
-	fetchError      bool
-	maxTokens       int
-	useConventional bool
+	fetching   bool
+	fetchError bool
 
 	appstate    int
 	commitState commitState
 
+	help     	help.Model
 	spinner   spinner.Model
 	textInput textinput.Model
 }
@@ -63,4 +65,5 @@ const (
 	Authenticating = iota
 	Quitting       = iota
 	Committing     = iota
+	ChoosingModel  = iota
 )

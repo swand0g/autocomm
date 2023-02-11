@@ -2,9 +2,9 @@
   <h1>
     <i>autocomm 🏎️</i>
   </h1>
-</div>
 
-Automatically generate commit mesages using ChatGPT 🤖
+  Automatically generate commit mesages using ChatGPT 🤖
+</div>
 
 ## *Installation*
 ```sh

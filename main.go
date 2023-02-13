@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -8,8 +9,9 @@ import (
 )
 
 type env struct {
-	DEBUG bool
-	DRY 	bool
+	DEBUG            bool
+	DRY              bool
+	USE_CONVENTIONAL bool
 }
 
 var environment env
@@ -26,7 +28,6 @@ func setupLogging() *os.File {
 	return nil
 }
 
-// todo: handle exit code error 129 when run in a folder that isnt a git repo
 func main() {
 	if !userInGitRepo() {
 		fmt.Println("This ain't a git repo 🤨")
@@ -34,10 +35,16 @@ func main() {
 	}
 
 	environment = env{
-		DEBUG: len(os.Getenv("DEBUG")) > 0,
-		DRY: len(os.Getenv("DRY")) > 0,
+		DEBUG: false,
+		DRY: false,
+		USE_CONVENTIONAL: false,
 	}
 
+	flag.BoolVar(&environment.DEBUG, "debug", false, "enable debug logging")
+	flag.BoolVar(&environment.DRY, "dry", false, "dry run (doesn't make API calls)")
+	flag.BoolVar(&environment.USE_CONVENTIONAL, "conventional", false, "use conventional commits")
+	flag.Parse()
+	
 	f := setupLogging()
 	if f != nil { defer f.Close() }
 

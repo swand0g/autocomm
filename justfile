@@ -13,23 +13,33 @@ check-key:
 build *args='':
   @go build -o ./bin/ $@ ./...
 
+# Freshly build and run the app
+build-run:
+  @go build -o ./bin/ ./... && ./bin/autocomm
+
+# Install the app with the shell script
 install *args='':
   @chmod +x {{install_file}} && {{install_file}} $@
 
 # Run the app
-run:
-  @go run ./...
+run *args='':
+  @go run ./... $@
 
 # Run the app in debug mode
 dev:
-  @DEBUG=1 go run ./...
+  @go run ./... --debug
 
 # Run the app in dry mode
 dry:
-  @DRY=1 go run ./...
+  go run ./... --dry
 
 # Run the app without making calls to OpenAI API
 dry-dev:
-  @DEBUG=1 DRY=1 go run ./...
+  go run ./... --debug --dry
 
+film:
+  @vhs < ./cinema/movie.tape
+
+# Aliases
+alias br := build-run
 alias dd := dry-dev

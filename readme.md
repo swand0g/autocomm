@@ -5,7 +5,7 @@
 
   Automatically generate commit mesages using ChatGPT 🤖
 
-  <img src="./cinema/movie.gif" alt="demo" width="70%" />
+  <img src="./cinema/movie.gif" alt="demo" width="80%" />
 </div>
 
 ## *Installation*

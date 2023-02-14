@@ -39,7 +39,7 @@ func (m model) HelpView() string {
 
 func (m model) QuitView() string {
 	peaceOutMsg := randGoodbyeMessage()
-	return fmt.Sprintf("\n  %s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color(colors.Purple)).Render(peaceOutMsg))
+	return fmt.Sprintf("\n%s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color(colors.Purple)).Render(peaceOutMsg))
 }
 
 func (m model) AuthenticatingView() string {
@@ -53,7 +53,7 @@ func (m model) ChooseView() string {
 		fs := fmt.Sprintf("  %s %s", m.spinner.View(), "Fetching commit messages...")
 		return  "\n" + fs + "\n"
 	} else if m.fetchError {
-		es := fmt.Sprintf("%s %s", TextWithColor("Error fetching commit messages!", colors.Red), "Check your API key and try again.")
+		es := fmt.Sprintf("  %s %s", TextWithColor("Error fetching commit messages!", colors.Red), "Check your API key and try again.")
 		return "\n" + es + "\n"
 	}
 

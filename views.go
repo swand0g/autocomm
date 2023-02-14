@@ -37,6 +37,7 @@ func (m model) HelpView() string {
 	return "\n" + m.help.ShortHelpView(keys)
 }
 
+// todo: allow this to be configurable
 func (m model) QuitView() string {
 	peaceOutMsg := randGoodbyeMessage()
 	return fmt.Sprintf("\n%s\n\n", lipgloss.NewStyle().Foreground(lipgloss.Color(colors.Purple)).Render(peaceOutMsg))

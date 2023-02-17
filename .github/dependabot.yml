@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    reviewers:
+      - "swand0g"

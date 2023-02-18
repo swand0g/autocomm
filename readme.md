@@ -10,5 +10,5 @@
 
 ## *Installation*
 ```sh
-curl -sfSL https://raw.githubusercontent.com/swand0g/autocomm/main/install.sh | bash
+curl -sfSL https://autocomm.vercel.app/install/install | bash
 ```

@@ -8,20 +8,24 @@ import (
 )
 
 type model struct {
-	choices  []string
-	cursor   int
-	selected map[int]struct{}
-	keymap   keymap
+	keymap   					keymap
 	
+	commitMsgCursor int
+	selected 				map[int]struct{}
+	commitChoices  	[]string
+	
+	aiModelCursor		int
+	aiModel					string
+	aiModels 			 	[]string
 	maxTokens       int
-	aiModel 			 	string
 	useConventional bool
 
 	apiKey        string
 	authenticated bool
 
-	fetching   bool
-	fetchError bool
+	fetching   				 			 bool
+	fetchError 				 			 bool
+	shouldRefetchForNewModel bool
 
 	appstate    int
 	commitState commitState
@@ -40,18 +44,19 @@ type commitState struct {
 }
 
 type keymap struct {
-	Quit         key.Binding
-	Enter        key.Binding
-	Up           key.Binding
-	Down         key.Binding
-	Authenticate key.Binding
-	Escape       key.Binding
-	Retry        key.Binding
+	Quit         	key.Binding
+	Enter        	key.Binding
+	Up           	key.Binding
+	Down         	key.Binding
+	Escape       	key.Binding
+	Retry        	key.Binding
+	Authenticate 	key.Binding
+	ChooseAIModel key.Binding
 }
 
 type (
 	requestStrResponse    struct{ data string }
-	requestStrArrResponse struct{ data []string }
+	requestResponse struct{ data []string }
 	requestError          struct{ err error }
 
 	commitResult struct {
@@ -65,5 +70,5 @@ const (
 	Authenticating = iota
 	Quitting       = iota
 	Committing     = iota
-	ChoosingModel  = iota
+	ChoosingAIModel  = iota
 )

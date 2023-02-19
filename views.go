@@ -18,16 +18,33 @@ func (m model) HelpView() string {
 				m.keymap.Up,
 				m.keymap.Down,
 				m.keymap.Enter,
-				m.keymap.Authenticate,
 				m.keymap.Retry,
+				m.keymap.Authenticate,
+				m.keymap.ChooseAIModel,
 			)
 			break
 		case Authenticating:
 			esc := m.keymap.Escape
 			esc.SetHelp(HelpText("esc"), "go back")
 
+			enter := m.keymap.Enter
+			enter.SetHelp(HelpText("enter"), "authenticate")
+
 			keys = []key.Binding{
 				esc,
+				enter,
+			}
+			break
+		case ChoosingAIModel:
+			esc := m.keymap.Escape
+			esc.SetHelp(HelpText("esc"), "go back")
+
+			enter := m.keymap.Enter
+			enter.SetHelp(HelpText("enter"), "select")
+
+			keys = []key.Binding{
+				esc,
+				enter,
 			}
 			break
 		default:
@@ -50,7 +67,7 @@ func (m model) AuthenticatingView() string {
 }
 
 func (m model) ChooseView() string {
-	if len(m.choices) == 0 && !m.fetchError && m.fetching {
+	if len(m.commitChoices) == 0 && !m.fetchError && m.fetching {
 		fs := fmt.Sprintf("  %s %s", m.spinner.View(), "Fetching commit messages...")
 		return  "\n" + fs + "\n"
 	} else if m.fetchError {
@@ -59,9 +76,9 @@ func (m model) ChooseView() string {
 	}
 
 	s := "\n"
-	for i, choice := range m.choices {
+	for i, choice := range m.commitChoices {
 		cursor := " "
-		if m.cursor == i {
+		if m.commitMsgCursor == i {
 			// todo: implement view padding
 			cursor = TextWithColor("  >", colors.Purple) //cursor!
 		}
@@ -84,15 +101,15 @@ func (m model) CommitView() string {
 }
 
 func (m model) ChooseAIModelView() string {
-	s := ""
+	s := "\n"
 
-	for i, aiModel := range API_MODELS {
+	for i, model := range m.aiModels {
 		cursor := " "
-		if m.cursor == i {
-			cursor = TextWithColor("  >", colors.Purple) //cursor!
+		if m.aiModelCursor == i {
+			cursor = TextWithColor("  >", colors.Purple)
 		}
 
-		s += fmt.Sprintf("%s %s\n", cursor, aiModel)
+		s += fmt.Sprintf("%s %s\n", cursor, model)
 	}
 
 	return s

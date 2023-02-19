@@ -58,10 +58,10 @@ func TextWithColor(s string, color string) string {
 func (m model) getCommitSuggestions() tea.Msg {
 	if environment.DRY {
 		time.Sleep(500 * time.Millisecond)
-		return requestStrArrResponse{DRY_COMMIT_SUGGESTIONS}
+		return requestResponse{DRY_COMMIT_SUGGESTIONS}
 	}
 
-	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
+	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional, m.aiModel)
 	errStr := ""
 	if err != nil {
 		errStr = err.Error()
@@ -75,7 +75,7 @@ func (m model) getCommitSuggestions() tea.Msg {
 	})
 
 	if err != nil { return requestError{err} }
-	return requestStrArrResponse{data}
+	return requestResponse{data}
 }
 
 func (m model) commitWithMsg() tea.Msg {

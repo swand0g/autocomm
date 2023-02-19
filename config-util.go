@@ -6,7 +6,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-func saveConfig(token string) bool {
+func saveConfig(key string, value string) bool {
+	viper.Set(key, value)
 	err := viper.WriteConfig()
 	if err != nil {
 		logi("Error saving config: %v", err)

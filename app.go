@@ -79,6 +79,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case tea.KeyMsg:
 					switch {
 						case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
+							saveConfig("aiModel", m.aiModel)
 							m.appstate = Choosing
 							break
 						
@@ -101,7 +102,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						case key.Matches(msg, m.keymap.Enter):
 							m.aiModel = m.aiModels[m.aiModelCursor]
 							m.shouldRefetchForNewModel = true
-							m.appstate = Choosing
 							logi("selected ai model: %v", m.aiModel)
 							break
 
@@ -199,8 +199,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							break
 						case key.Matches(msg, m.keymap.Enter):
 							key := m.textInput.Value()
-							viper.Set("apiKey", key)
-							saveConfig(key)
+							saveConfig("apiKey", key)
 							m.apiKey = key
 							m.fetchError = false
 							m.commitChoices = []string{}

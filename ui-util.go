@@ -22,6 +22,7 @@ type Color struct {
 	Gray    string
 	Silver  string
 	Gold    string
+	Tron    string
 }
 
 var colors = Color{
@@ -38,6 +39,7 @@ var colors = Color{
 	Gray:    "#808080",
 	Silver:  "#c0c0c0",
 	Gold:    "#ffd700",
+	Tron: "#00ffff",
 }
 
 /* Components */

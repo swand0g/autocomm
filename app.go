@@ -1,13 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -17,27 +10,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
-
-func req() tea.Msg {
-	time.Sleep(1 * time.Second)
-	url := "https://jsonplaceholder.typicode.com/todos/1"
-	resp, err := http.Get(url)
-	if err != nil {
-		fmt.Println(err)
-		return requestError{err}
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return requestError{err}
-	}
-
-	r := strings.Replace(string(body), "\n", "", -1)
-	log.Println("fetched: ", r)
-	return requestResponse{[]string{r}}
-}
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
@@ -120,9 +92,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.shouldRefetchForNewModel {
 					m.shouldRefetchForNewModel = false
 				}
-
-				// used for debugging
-				// cmds = append(cmds, req)
 				
 				cmds = append(cmds, m.getCommitSuggestions)
 			}

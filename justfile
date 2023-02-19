@@ -6,7 +6,7 @@ _default:
   @just -lu --justfile {{justfile()}}
 
 # Print app config
-print-config:
+config:
   @cat {{config-file}}
 
 # Build the app

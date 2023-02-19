@@ -76,8 +76,15 @@ func (m model) getCommitSuggestions() tea.Msg {
 		useConventional: m.useConventional,
 	})
 
+	goodCommitSuggestions := []string{}
+	for _, suggestion := range data {
+		if suggestion != "" {
+			goodCommitSuggestions = append(goodCommitSuggestions, suggestion)
+		}
+	}
+
 	if err != nil { return requestError{err} }
-	return requestResponse{data}
+	return requestResponse{goodCommitSuggestions}
 }
 
 func (m model) commitWithMsg() tea.Msg {

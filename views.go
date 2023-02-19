@@ -71,7 +71,11 @@ func (m model) ChooseView() string {
 		fs := fmt.Sprintf("  %s %s", m.spinner.View(), "Fetching commit messages...")
 		return  "\n" + fs + "\n"
 	} else if m.fetchError {
-		es := fmt.Sprintf("  %s %s", TextWithColor("Error fetching commit messages!", colors.Red), "Check your API key and try again.")
+		es := fmt.Sprintf(
+			"  %s %s",
+			TextWithColor("Error fetching commit messages!", colors.Red),
+			"Check your API key and try again.",
+		)
 		return "\n" + es + "\n"
 	}
 

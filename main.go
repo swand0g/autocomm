@@ -49,9 +49,9 @@ func main() {
 	flag.BoolVar(&environment.USE_CONVENTIONAL, "conventional", false, "use conventional commits")
 	flag.Parse()
 	
-	setupConfig()
 	f := setupLogging()
 	if f != nil { defer f.Close() }
+	setupConfig()
 
 	prog := tea.NewProgram(InitalModel())
 	if _, err := prog.Run(); err != nil {
@@ -108,10 +108,4 @@ func setupConfig() {
 
 	viper.SetDefault("apiKey", "")
 	viper.SetDefault("aiModel", "text-davinci-003")
-}
-
-func main2() {
-	setupConfig()
-	fmt.Printf("%v\n", viper.AllSettings())
-	// viper.WriteConfig()
 }

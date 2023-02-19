@@ -16,6 +16,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = []tea.Cmd{}
 		spinCmd tea.Cmd
 	)
+	
+	var resetCommitSuggestions = func() {
+		m.fetchError = false
+		m.commitChoices = []string{}
+	}
 
 	m.spinner, spinCmd = m.spinner.Update(msg)
 	cmds = append(cmds, spinCmd)
@@ -25,6 +30,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case requestResponse:
 			logi("received res in Update(msg): %v", msg.data)
 			m.fetching = false
+			m.fetchError = false
 			if !m.shouldRefetchForNewModel {
 				m.commitChoices = msg.data
 			}
@@ -88,11 +94,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			shouldRefetch := len(m.commitChoices) == 0 || m.shouldRefetchForNewModel
 			
 			if shouldRefetch && canFetch {
-				m.fetching = true
 				if m.shouldRefetchForNewModel {
 					m.shouldRefetchForNewModel = false
+					resetCommitSuggestions()
 				}
-				
+				m.fetching = true
 				cmds = append(cmds, m.getCommitSuggestions)
 			}
 
@@ -121,8 +127,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 						case key.Matches(msg, m.keymap.Retry):
 							if !m.fetching {
-								m.fetchError = false
-								m.commitChoices = []string{}
+								resetCommitSuggestions()
 							}
 							break
 
@@ -168,12 +173,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							break
 						case key.Matches(msg, m.keymap.Enter):
 							key := m.textInput.Value()
-							saveConfig("apiKey", key)
 							m.apiKey = key
-							m.fetchError = false
-							m.commitChoices = []string{}
 							m.textInput.Reset()
 							m.appstate = Choosing
+							resetCommitSuggestions()
+							saveConfig("apiKey", key)
 							break
 					}
 			}

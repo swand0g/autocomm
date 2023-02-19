@@ -82,10 +82,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							m.shouldRefetchForNewModel = true
 							logi("selected ai model: %v", m.aiModel)
 							break
-
 					}
 			}
-
 			break
 		}
 		

@@ -10,14 +10,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-var VERSION = "1.1"
-
 type env struct {
 	DEBUG            bool
 	DRY              bool
 	USE_CONVENTIONAL bool
 }
 
+const VERSION = "1.1"
 var environment env
 
 func setupLogging() *os.File {
@@ -30,34 +29,6 @@ func setupLogging() *os.File {
 		return f
 	}
 	return nil
-}
-
-func main() {
-	if !userInGitRepo() {
-		fmt.Println("This ain't a git repo 🤨")
-		os.Exit(1)
-	}
-
-	environment = env{
-		DEBUG: false,
-		DRY: false,
-		USE_CONVENTIONAL: false,
-	}
-
-	flag.BoolVar(&environment.DEBUG, "debug", false, "enable debug logging")
-	flag.BoolVar(&environment.DRY, "dry", false, "dry run (doesn't make API calls)")
-	flag.BoolVar(&environment.USE_CONVENTIONAL, "conventional", false, "use conventional commits")
-	flag.Parse()
-	
-	f := setupLogging()
-	if f != nil { defer f.Close() }
-	setupConfig()
-
-	prog := tea.NewProgram(InitalModel())
-	if _, err := prog.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
-		os.Exit(1)
-	}
 }
 
 func createConfigFile() (bool, error) {
@@ -108,4 +79,32 @@ func setupConfig() {
 
 	viper.SetDefault("apiKey", "")
 	viper.SetDefault("aiModel", "text-davinci-003")
+}
+
+func main() {
+	if !userInGitRepo() {
+		fmt.Println("This ain't a git repo 🤨")
+		os.Exit(1)
+	}
+	
+	environment = env{
+		DEBUG: false,
+		DRY: false,
+		USE_CONVENTIONAL: false,
+	}
+
+	flag.BoolVar(&environment.DEBUG, "debug", false, "enable debug logging")
+	flag.BoolVar(&environment.DRY, "dry", false, "dry run (doesn't make API calls)")
+	flag.BoolVar(&environment.USE_CONVENTIONAL, "conventional", false, "use conventional commits")
+	flag.Parse()
+
+	f := setupLogging()
+	if f != nil { defer f.Close() }
+	setupConfig()
+
+	prog := tea.NewProgram(InitalModel())
+	if _, err := prog.Run(); err != nil {
+		fmt.Printf("Alas, there's been an error: %v", err)
+		os.Exit(1)
+	}
 }

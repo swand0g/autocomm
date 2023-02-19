@@ -1,7 +1,5 @@
 package main
 
-const CONFIG_FILE_NAME = ".autocomm"
-
 var DRY_COMMIT_SUGGESTIONS = []string{
 	"feat: add 'comments' option",
 	"docs: remove reference to 'timeTravel'",

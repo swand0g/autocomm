@@ -22,6 +22,7 @@ type Color struct {
 	Gray    string
 	Silver  string
 	Gold    string
+	Tron    string
 }
 
 var colors = Color{
@@ -38,6 +39,7 @@ var colors = Color{
 	Gray:    "#808080",
 	Silver:  "#c0c0c0",
 	Gold:    "#ffd700",
+	Tron: "#00ffff",
 }
 
 /* Components */
@@ -58,10 +60,10 @@ func TextWithColor(s string, color string) string {
 func (m model) getCommitSuggestions() tea.Msg {
 	if environment.DRY {
 		time.Sleep(500 * time.Millisecond)
-		return requestStrArrResponse{DRY_COMMIT_SUGGESTIONS}
+		return requestResponse{DRY_COMMIT_SUGGESTIONS}
 	}
 
-	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional)
+	data, err := fetchCommitSuggestions(m.apiKey, m.useConventional, m.aiModel)
 	errStr := ""
 	if err != nil {
 		errStr = err.Error()
@@ -74,8 +76,15 @@ func (m model) getCommitSuggestions() tea.Msg {
 		useConventional: m.useConventional,
 	})
 
+	goodCommitSuggestions := []string{}
+	for _, suggestion := range data {
+		if suggestion != "" {
+			goodCommitSuggestions = append(goodCommitSuggestions, suggestion)
+		}
+	}
+
 	if err != nil { return requestError{err} }
-	return requestStrArrResponse{data}
+	return requestResponse{goodCommitSuggestions}
 }
 
 func (m model) commitWithMsg() tea.Msg {

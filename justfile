@@ -1,12 +1,12 @@
 set positional-arguments
-config-file := "~/.autocomm"
+config-file := "~/.config/autocomm/autocomm.toml"
 install_file := "./install.sh"
 
 _default:
   @just -lu --justfile {{justfile()}}
 
-# Print the OpenAI API key being used
-check-key:
+# Print app config
+config:
   @cat {{config-file}}
 
 # Build the app
@@ -43,3 +43,6 @@ film:
 # Aliases
 alias br := build-run
 alias dd := dry-dev
+alias d := dev
+alias i := install
+alias r := run

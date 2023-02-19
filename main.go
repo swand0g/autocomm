@@ -4,8 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/spf13/viper"
 )
 
 type env struct {
@@ -14,6 +16,7 @@ type env struct {
 	USE_CONVENTIONAL bool
 }
 
+const VERSION = "1.1"
 var environment env
 
 func setupLogging() *os.File {
@@ -28,12 +31,62 @@ func setupLogging() *os.File {
 	return nil
 }
 
+func createConfigFile() (bool, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return false, err
+	}
+
+	dirPath := filepath.Join(home, ".config", "autocomm")
+	mkdirErr := os.MkdirAll(dirPath, os.ModePerm)
+	if mkdirErr != nil {
+		return false, mkdirErr
+	}
+
+	filePath := filepath.Join(dirPath, "autocomm.toml")
+	f, fileMakeErr := os.Create(filePath)
+	defer f.Close()
+	if err != nil {
+		return false, fileMakeErr
+	}
+
+	return true, nil
+}
+
+func setupConfig() {
+	viper.SetConfigName("autocomm.toml")
+	viper.SetConfigType("toml")
+	
+	home, homeDirErr := os.UserHomeDir()
+	if homeDirErr != nil { fmt.Println("An unexpected error occurred when getting your home directory 😕") }
+
+	viper.AddConfigPath(filepath.Join(home, ".config", "autocomm"))
+	viper.AddConfigPath(home)
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			if ok, createErr := createConfigFile(); !ok {
+				fmt.Println("An unexpected error occurred when creating the config file 😕")
+				logi(createErr.Error())
+				os.Exit(1)
+			}
+			logi("Config file created at $HOME/.config/autocomm/.autocomm.toml")
+		}
+	} else {
+		logi("Config file found!")
+	}
+
+	viper.SetDefault("apiKey", "")
+	viper.SetDefault("aiModel", "text-davinci-003")
+}
+
 func main() {
 	if !userInGitRepo() {
 		fmt.Println("This ain't a git repo 🤨")
 		os.Exit(1)
 	}
-
+	
 	environment = env{
 		DEBUG: false,
 		DRY: false,
@@ -44,9 +97,10 @@ func main() {
 	flag.BoolVar(&environment.DRY, "dry", false, "dry run (doesn't make API calls)")
 	flag.BoolVar(&environment.USE_CONVENTIONAL, "conventional", false, "use conventional commits")
 	flag.Parse()
-	
+
 	f := setupLogging()
 	if f != nil { defer f.Close() }
+	setupConfig()
 
 	prog := tea.NewProgram(InitalModel())
 	if _, err := prog.Run(); err != nil {

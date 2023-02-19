@@ -278,6 +278,8 @@ func InitalModel() model {
 		appstate = Choosing
 	}
 
+	aiModel := viper.GetString("aiModel")
+	if aiModel == "" { aiModel = "text-davinci-003" }
 	models := []string{
 		"text-davinci-003",
 		"text-davinci-002",
@@ -343,7 +345,7 @@ func InitalModel() model {
 			),
 		},
 		// data
-		aiModel: "text-davinci-003",
+		aiModel: aiModel,
 		aiModels: models,
 		// views & components
 		spinner: s,

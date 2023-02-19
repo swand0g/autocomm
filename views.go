@@ -108,8 +108,11 @@ func (m model) ChooseAIModelView() string {
 		if m.aiModelCursor == i {
 			cursor = TextWithColor("  >", colors.Purple)
 		}
-
-		s += fmt.Sprintf("%s %s\n", cursor, model)
+		mt := model
+		if model == m.aiModel {
+			mt = TextWithColor(model, colors.Green)
+		}
+		s += fmt.Sprintf("%s %s\n", cursor, mt)
 	}
 
 	return s

@@ -43,3 +43,6 @@ film:
 # Aliases
 alias br := build-run
 alias dd := dry-dev
+alias d := dev
+alias i := install
+alias r := run

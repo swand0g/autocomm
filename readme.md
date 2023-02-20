@@ -8,6 +8,11 @@
   <img src="./cinema/movie.gif" alt="demo" width="80%" />
 </div>
 
+## *Installation*
+```sh
+curl -sfSL https://autocomm.vercel.app/install | bash
+```
+
 ## *Features*
 - [x] Automatically generate commit messages using ChatGPT 🤖
 - [x] Automatically commit using the generated message
@@ -30,9 +35,4 @@ auto
 Run with conventional commit messages
 ```sh
 autocomm --conventional
-```
-
-## *Installation*
-```sh
-curl -sfSL https://autocomm.vercel.app/install | bash
 ```

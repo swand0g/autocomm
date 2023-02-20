@@ -22,6 +22,11 @@
 autocomm
 ```
 
+Alternatively, the install script adds an alias
+```sh
+auto
+```
+
 Run with conventional commit messages
 ```sh
 autocomm --conventional

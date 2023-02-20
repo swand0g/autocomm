@@ -276,7 +276,7 @@ func InitalModel() model {
 		commitChoices: []string{},
 		selected: make(map[int]struct{}),
 		maxTokens: 100,
-		useConventional: false,
+		useConventional: environment.USE_CONVENTIONAL,
 		keymap: keymap{
 			Quit: key.NewBinding(
 				key.WithKeys("q", "ctrl+c"),

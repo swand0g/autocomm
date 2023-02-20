@@ -17,6 +17,16 @@
 - [ ] Custom commit message prefix
 - [ ] Custom keybindings
 
+## *Usage*
+```sh
+autocomm
+```
+
+Run with conventional commit messages
+```sh
+autocomm --conventional
+```
+
 ## *Installation*
 ```sh
 curl -sfSL https://autocomm.vercel.app/install | bash

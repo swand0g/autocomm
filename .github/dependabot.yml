@@ -2,12 +2,12 @@
 
 version: 2
 updates:
-	- package-ecosystem: "gomod" 
-		directory: "/" # Location of package manifests
-		schedule:
-			interval: "daily"
-		commit-message:
-			prefix: "deps"
-			include: "scope"
-		reviewers:
-			- "swand0g"
+  - package-ecosystem: "gomod" 
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    reviewers:
+      - "swand0g"

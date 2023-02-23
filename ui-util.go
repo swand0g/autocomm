@@ -9,37 +9,37 @@ import (
 )
 
 type Color struct {
-	Red     string
-	Orange  string
-	Yellow  string
-	Green   string
-	Blue    string
-	Purple  string
-	Pink    string
-	Brown   string
-	Black   string
-	White   string
-	Gray    string
-	Silver  string
-	Gold    string
-	Tron    string
+	Red    string
+	Orange string
+	Yellow string
+	Green  string
+	Blue   string
+	Purple string
+	Pink   string
+	Brown  string
+	Black  string
+	White  string
+	Gray   string
+	Silver string
+	Gold   string
+	Tron   string
 }
 
 var colors = Color{
-	Red:     "#ff0000",
-	Orange:  "#ff7f00",
-	Yellow:  "#ffff00",
-	Green:   "#00ff00",
-	Blue:    "#0000ff",
-	Purple:  "#8b00ff",
-	Pink:    "#ff00ff",
-	Brown:   "#a52a2a",
-	Black:   "#000000",
-	White:   "#ffffff",
-	Gray:    "#808080",
-	Silver:  "#c0c0c0",
-	Gold:    "#ffd700",
-	Tron: "#00ffff",
+	Red:    "#ff0000",
+	Orange: "#ff7f00",
+	Yellow: "#ffff00",
+	Green:  "#00ff00",
+	Blue:   "#0000ff",
+	Purple: "#8b00ff",
+	Pink:   "#ff00ff",
+	Brown:  "#a52a2a",
+	Black:  "#000000",
+	White:  "#ffffff",
+	Gray:   "#808080",
+	Silver: "#c0c0c0",
+	Gold:   "#ffd700",
+	Tron:   "#00ffff",
 }
 
 /* Components */
@@ -68,11 +68,16 @@ func (m model) getCommitSuggestions() tea.Msg {
 	if err != nil {
 		errStr = err.Error()
 	}
-	
-	logi("res for getCommitSuggestions(): %v", struct{ data []string; err string; apikey string; useConventional bool }{
-		data: data,
-		err: errStr,
-		apikey: m.apiKey,
+
+	logi("res for getCommitSuggestions(): %v", struct {
+		data            []string
+		err             string
+		apikey          string
+		useConventional bool
+	}{
+		data:            data,
+		err:             errStr,
+		apikey:          m.apiKey,
 		useConventional: m.useConventional,
 	})
 
@@ -83,7 +88,9 @@ func (m model) getCommitSuggestions() tea.Msg {
 		}
 	}
 
-	if err != nil { return requestError{err} }
+	if err != nil {
+		return requestError{err}
+	}
 	return requestResponse{goodCommitSuggestions}
 }
 

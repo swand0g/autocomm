@@ -20,7 +20,9 @@ func todo(params ...string) {
 }
 
 func logi(format string, v ...interface{}) {
-	if !environment.DEBUG { return }
+	if !environment.DEBUG {
+		return
+	}
 
 	_, file, line, ok := runtime.Caller(1)
 	fileInfo := strings.Split(file, "/")

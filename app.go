@@ -13,10 +13,10 @@ import (
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
-		cmds = []tea.Cmd{}
+		cmds    = []tea.Cmd{}
 		spinCmd tea.Cmd
 	)
-	
+
 	var resetCommitSuggestions = func() {
 		m.fetchError = false
 		m.commitChoices = []string{}
@@ -27,70 +27,72 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// Handle async messages first
 	switch msg := msg.(type) {
-		case requestResponse:
-			logi("received res in Update(msg): %v", msg.data)
-			m.fetching = false
-			m.fetchError = false
-			if !m.shouldRefetchForNewModel {
-				m.commitChoices = msg.data
-			}
-			break
-		case requestError:
-			m.fetchError = true
-			m.fetching = false
-			break
-		case commitResult:
-			if msg.err != nil {
-				m.commitState.err = msg.err
-			} else {
-				m.commitState.committed = true
-				m.commitState.committing = false
-				m.commitState.commitOutput = msg.output
-			}
-			break
+	case requestResponse:
+		logi("received res in Update(msg): %v", msg.data)
+		m.fetching = false
+		m.fetchError = false
+		if !m.shouldRefetchForNewModel {
+			m.commitChoices = msg.data
+		}
+		break
+	case requestError:
+		m.fetchError = true
+		m.fetching = false
+		break
+	case commitResult:
+		if msg.err != nil {
+			m.commitState.err = msg.err
+		} else {
+			m.commitState.committed = true
+			m.commitState.committing = false
+			m.commitState.commitOutput = msg.output
+		}
+		break
 	}
 
 	switch m.appstate {
 
-		case ChoosingAIModel: {
+	case ChoosingAIModel:
+		{
 			switch msg := msg.(type) {
-				case tea.KeyMsg:
-					switch {
-						case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
-							saveConfig("aiModel", m.aiModel)
-							m.appstate = Choosing
-							break
-						
-						case key.Matches(msg, m.keymap.Up):
-							if m.aiModelCursor > 0 {
-								m.aiModelCursor--
-							} else {
-								m.aiModelCursor = len(m.aiModels) - 1
-							}
-							break
-						
-						case key.Matches(msg, m.keymap.Down):
-							if m.aiModelCursor < len(m.aiModels) - 1 {
-								m.aiModelCursor++
-							} else {
-								m.aiModelCursor = 0
-							}
-							break
-						
-						case key.Matches(msg, m.keymap.Enter):
-							m.aiModel = m.aiModels[m.aiModelCursor]
-							m.shouldRefetchForNewModel = true
-							logi("selected ai model: %v", m.aiModel)
-							break
+			case tea.KeyMsg:
+				switch {
+				case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
+					saveConfig("aiModel", m.aiModel)
+					m.appstate = Choosing
+					break
+
+				case key.Matches(msg, m.keymap.Up):
+					if m.aiModelCursor > 0 {
+						m.aiModelCursor--
+					} else {
+						m.aiModelCursor = len(m.aiModels) - 1
 					}
+					break
+
+				case key.Matches(msg, m.keymap.Down):
+					if m.aiModelCursor < len(m.aiModels)-1 {
+						m.aiModelCursor++
+					} else {
+						m.aiModelCursor = 0
+					}
+					break
+
+				case key.Matches(msg, m.keymap.Enter):
+					m.aiModel = m.aiModels[m.aiModelCursor]
+					m.shouldRefetchForNewModel = true
+					logi("selected ai model: %v", m.aiModel)
+					break
+				}
 			}
 			break
 		}
-		
-		case Choosing: {
+
+	case Choosing:
+		{
 			canFetch := !m.fetching && !m.fetchError
 			shouldRefetch := len(m.commitChoices) == 0 || m.shouldRefetchForNewModel
-			
+
 			if shouldRefetch && canFetch {
 				if m.shouldRefetchForNewModel {
 					m.shouldRefetchForNewModel = false
@@ -101,83 +103,84 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			switch msg := msg.(type) {
-				case tea.KeyMsg:
-					switch {
-						case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
-							m.appstate = Quitting
-							return m, tea.Quit
+			case tea.KeyMsg:
+				switch {
+				case key.Matches(msg, m.keymap.Quit, m.keymap.Escape):
+					m.appstate = Quitting
+					return m, tea.Quit
 
-						case key.Matches(msg, m.keymap.Up):
-							if m.commitMsgCursor > 0 {
-								m.commitMsgCursor--
-							} else {
-								m.commitMsgCursor = len(m.commitChoices) - 1
-							}
-							break
+				case key.Matches(msg, m.keymap.Up):
+					if m.commitMsgCursor > 0 {
+						m.commitMsgCursor--
+					} else {
+						m.commitMsgCursor = len(m.commitChoices) - 1
+					}
+					break
 
-						case key.Matches(msg, m.keymap.Down):
-							if m.commitMsgCursor < len(m.commitChoices) - 1 {
-								m.commitMsgCursor++
-							} else {
-								m.commitMsgCursor = 0
-							}
-							break
+				case key.Matches(msg, m.keymap.Down):
+					if m.commitMsgCursor < len(m.commitChoices)-1 {
+						m.commitMsgCursor++
+					} else {
+						m.commitMsgCursor = 0
+					}
+					break
 
-						case key.Matches(msg, m.keymap.Retry):
-							if !m.fetching {
-								resetCommitSuggestions()
-							}
-							break
+				case key.Matches(msg, m.keymap.Retry):
+					if !m.fetching {
+						resetCommitSuggestions()
+					}
+					break
 
-						case key.Matches(msg, m.keymap.Enter):
-							logi("selected: %v", m.commitChoices[m.commitMsgCursor])
-							_, ok := m.selected[m.commitMsgCursor]
-							if ok {
-								delete(m.selected, m.commitMsgCursor)
-							} else {
-								m.selected[m.commitMsgCursor] = struct{}{}
-							}
-
-							cmtMsg := m.commitChoices[m.commitMsgCursor]
-							m.commitState.committing = true
-							m.commitState.chosenMsg = cmtMsg
-							m.appstate = Committing
-							cmds = append(cmds, m.commitWithMsg)
-							break
-
-						case key.Matches(msg, m.keymap.Authenticate):
-							m.appstate = Authenticating
-							break
-						
-						case key.Matches(msg, m.keymap.ChooseAIModel):
-							m.appstate = ChoosingAIModel
-							break
+				case key.Matches(msg, m.keymap.Enter):
+					logi("selected: %v", m.commitChoices[m.commitMsgCursor])
+					_, ok := m.selected[m.commitMsgCursor]
+					if ok {
+						delete(m.selected, m.commitMsgCursor)
+					} else {
+						m.selected[m.commitMsgCursor] = struct{}{}
 					}
 
-				default:
+					cmtMsg := m.commitChoices[m.commitMsgCursor]
+					m.commitState.committing = true
+					m.commitState.chosenMsg = cmtMsg
+					m.appstate = Committing
+					cmds = append(cmds, m.commitWithMsg)
 					break
+
+				case key.Matches(msg, m.keymap.Authenticate):
+					m.appstate = Authenticating
+					break
+
+				case key.Matches(msg, m.keymap.ChooseAIModel):
+					m.appstate = ChoosingAIModel
+					break
+				}
+
+			default:
+				break
 			}
 		}
 
-		case Authenticating: {
+	case Authenticating:
+		{
 			var textInputCmd tea.Cmd
 
 			switch msg := msg.(type) {
-				case tea.KeyMsg:
-					switch {
-						case key.Matches(msg, m.keymap.Escape):
-							m.textInput.Reset()
-							m.appstate = Choosing
-							break
-						case key.Matches(msg, m.keymap.Enter):
-							key := m.textInput.Value()
-							m.apiKey = key
-							m.textInput.Reset()
-							m.appstate = Choosing
-							resetCommitSuggestions()
-							saveConfig("apiKey", key)
-							break
-					}
+			case tea.KeyMsg:
+				switch {
+				case key.Matches(msg, m.keymap.Escape):
+					m.textInput.Reset()
+					m.appstate = Choosing
+					break
+				case key.Matches(msg, m.keymap.Enter):
+					key := m.textInput.Value()
+					m.apiKey = key
+					m.textInput.Reset()
+					m.appstate = Choosing
+					resetCommitSuggestions()
+					saveConfig("apiKey", key)
+					break
+				}
 			}
 
 			m.textInput, textInputCmd = m.textInput.Update(msg)
@@ -187,14 +190,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			break
 		}
 
-		case Committing:
-			if m.commitState.err != nil || m.commitState.committed {
-				return m, tea.Quit
-			}
-			break
+	case Committing:
+		if m.commitState.err != nil || m.commitState.committed {
+			return m, tea.Quit
+		}
+		break
 
-		default:
-			break
+	default:
+		break
 	}
 
 	return m, tea.Batch(cmds...)
@@ -204,31 +207,31 @@ func (m model) View() string {
 	v := ""
 
 	switch m.appstate {
-		case Quitting:
-			return m.QuitView()
+	case Quitting:
+		return m.QuitView()
 
-		case Authenticating:
-			v += m.AuthenticatingView()
-			break
-		
-		case ChoosingAIModel:
-			v += m.ChooseAIModelView()
-			break
+	case Authenticating:
+		v += m.AuthenticatingView()
+		break
 
-		case Committing:
-			v += m.CommitView()
-			if (m.commitState.committed) {
-				return v
-			}
-			break
+	case ChoosingAIModel:
+		v += m.ChooseAIModelView()
+		break
 
-		case Choosing:
-			fallthrough
-		default:
-			v += m.ChooseView()
-			break
+	case Committing:
+		v += m.CommitView()
+		if m.commitState.committed {
+			return v
+		}
+		break
+
+	case Choosing:
+		fallthrough
+	default:
+		v += m.ChooseView()
+		break
 	}
-	
+
 	v += m.HelpView()
 	return v
 }
@@ -242,14 +245,16 @@ func (m model) Init() tea.Cmd {
 func InitalModel() model {
 	apiKey, err := getAPIKey()
 	initiallyAuthenticated := apiKey != "" && err == nil
-	
+
 	appstate := Authenticating
 	if initiallyAuthenticated {
 		appstate = Choosing
 	}
 
 	aiModel := viper.GetString("aiModel")
-	if aiModel == "" { aiModel = "text-davinci-003" }
+	if aiModel == "" {
+		aiModel = "text-davinci-003"
+	}
 	models := []string{
 		"text-davinci-003",
 		"text-davinci-002",
@@ -271,11 +276,12 @@ func InitalModel() model {
 	h := help.NewModel()
 
 	return model{
-		apiKey: apiKey,
-		authenticated: initiallyAuthenticated,
-		commitChoices: []string{},
-		selected: make(map[int]struct{}),
-		maxTokens: 100,
+    // General
+		apiKey:          apiKey,
+		authenticated:   initiallyAuthenticated,
+		commitChoices:   []string{},
+		selected:        make(map[int]struct{}),
+		maxTokens:       100,
 		useConventional: environment.USE_CONVENTIONAL,
 		keymap: keymap{
 			Quit: key.NewBinding(
@@ -311,25 +317,25 @@ func InitalModel() model {
 				key.WithHelp(HelpText("m"), "ai model"),
 			),
 		},
-		// data
-		aiModel: aiModel,
+		// Data
+		aiModel:  aiModel,
 		aiModels: models,
-		// views & components
-		spinner: s,
-		help: h,
+		// Views & components
+		spinner:   s,
+		help:      h,
 		textInput: ti,
-		// app state
-		appstate: appstate,
-		fetching: false,
-		fetchError: false,
+		// App state
+		appstate:                 appstate,
+		fetching:                 false,
+		fetchError:               false,
 		shouldRefetchForNewModel: false,
-		// substates
+		// Substates
 		commitState: commitState{
-			chosenMsg: "",
-			committed: false,
-			committing: false,
+			chosenMsg:    "",
+			committed:    false,
+			committing:   false,
 			commitOutput: "",
-			err: nil,
+			err:          nil,
 		},
 	}
 }

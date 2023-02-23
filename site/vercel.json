@@ -1,21 +1,21 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "github": {
-    "silent": true
-  },
-  "redirects": [
-    { "source": "/", "destination": "https://github.com/swand0g/autocomm" }
-  ],
-  "rewrites": [{ "source": "/install", "destination": "/install.txt" }],
-  "headers": [
-    {
-      "source": "/install",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    }
-  ]
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"github": {
+		"silent": true
+	},
+	"redirects": [
+		{ "source": "/", "destination": "https://github.com/swand0g/autocomm" }
+	],
+	"rewrites": [{ "source": "/install", "destination": "/install.txt" }],
+	"headers": [
+		{
+			"source": "/install",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=3600"
+				}
+			]
+		}
+	]
 }

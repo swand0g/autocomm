@@ -13,44 +13,44 @@ func (m model) HelpView() string {
 	}
 
 	switch m.appstate {
-		case Choosing:
-			keys = append(keys,
-				m.keymap.Up,
-				m.keymap.Down,
-				m.keymap.Enter,
-				m.keymap.Retry,
-				m.keymap.Authenticate,
-				m.keymap.ChooseAIModel,
-			)
-			break
-		case Authenticating:
-			esc := m.keymap.Escape
-			esc.SetHelp(HelpText("esc"), "go back")
+	case Choosing:
+		keys = append(keys,
+			m.keymap.Up,
+			m.keymap.Down,
+			m.keymap.Enter,
+			m.keymap.Retry,
+			m.keymap.Authenticate,
+			m.keymap.ChooseAIModel,
+		)
+		break
+	case Authenticating:
+		esc := m.keymap.Escape
+		esc.SetHelp(HelpText("esc"), "go back")
 
-			enter := m.keymap.Enter
-			enter.SetHelp(HelpText("enter"), "authenticate")
+		enter := m.keymap.Enter
+		enter.SetHelp(HelpText("enter"), "authenticate")
 
-			keys = []key.Binding{
-				esc,
-				enter,
-			}
-			break
-		case ChoosingAIModel:
-			esc := m.keymap.Escape
-			esc.SetHelp(HelpText("esc"), "go back")
+		keys = []key.Binding{
+			esc,
+			enter,
+		}
+		break
+	case ChoosingAIModel:
+		esc := m.keymap.Escape
+		esc.SetHelp(HelpText("esc"), "go back")
 
-			enter := m.keymap.Enter
-			enter.SetHelp(HelpText("enter"), "select")
+		enter := m.keymap.Enter
+		enter.SetHelp(HelpText("enter"), "select")
 
-			keys = []key.Binding{
-				esc,
-				enter,
-			}
-			break
-		default:
-			break
+		keys = []key.Binding{
+			esc,
+			enter,
+		}
+		break
+	default:
+		break
 	}
-	
+
 	return "\n" + m.help.ShortHelpView(keys)
 }
 
@@ -69,7 +69,7 @@ func (m model) AuthenticatingView() string {
 func (m model) ChooseView() string {
 	if len(m.commitChoices) == 0 && !m.fetchError && m.fetching {
 		fs := fmt.Sprintf("  %s %s", m.spinner.View(), "Fetching commit messages...")
-		return  "\n" + fs + "\n"
+		return "\n" + fs + "\n"
 	} else if m.fetchError {
 		es := fmt.Sprintf(
 			"  %s %s",
@@ -112,7 +112,7 @@ func (m model) ChooseAIModelView() string {
 		if m.aiModelCursor == i {
 			cursor = TextWithColor("  >", colors.Purple)
 		}
-		
+
 		mt := model
 		if model == m.aiModel {
 			mt = TextWithColor(model, colors.Tron)

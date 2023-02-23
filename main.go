@@ -17,6 +17,7 @@ type env struct {
 }
 
 const VERSION = "1.1"
+
 var environment env
 
 func setupLogging() *os.File {
@@ -56,9 +57,11 @@ func createConfigFile() (bool, error) {
 func setupConfig() {
 	viper.SetConfigName("autocomm.toml")
 	viper.SetConfigType("toml")
-	
+
 	home, homeDirErr := os.UserHomeDir()
-	if homeDirErr != nil { fmt.Println("An unexpected error occurred when getting your home directory 😕") }
+	if homeDirErr != nil {
+		fmt.Println("An unexpected error occurred when getting your home directory 😕")
+	}
 
 	viper.AddConfigPath(filepath.Join(home, ".config", "autocomm"))
 	viper.AddConfigPath(home)
@@ -86,10 +89,10 @@ func main() {
 		fmt.Println("This ain't a git repo 🤨")
 		os.Exit(1)
 	}
-	
+
 	environment = env{
-		DEBUG: false,
-		DRY: false,
+		DEBUG:            false,
+		DRY:              false,
 		USE_CONVENTIONAL: false,
 	}
 
@@ -99,7 +102,9 @@ func main() {
 	flag.Parse()
 
 	f := setupLogging()
-	if f != nil { defer f.Close() }
+	if f != nil {
+		defer f.Close()
+	}
 	setupConfig()
 
 	prog := tea.NewProgram(InitalModel())

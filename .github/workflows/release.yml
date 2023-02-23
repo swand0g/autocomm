@@ -2,111 +2,111 @@ name: Release ⚡️
 run-name: ${{ github.ref_name }}
 
 on:
-  push:
-    tags:
-      - "v*"
-  workflow_dispatch:
+	push:
+		tags:
+			- "v*"
+	workflow_dispatch:
 
 jobs:
-  build-linux:
-    name: Build Linux
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [linux]
-        arch: [arm, arm64, amd64]
-    steps:
-      - uses: actions/checkout@v3
+	build-linux:
+		name: Build Linux
+		runs-on: ubuntu-latest
+		strategy:
+			matrix:
+				os: [linux]
+				arch: [arm, arm64, amd64]
+		steps:
+			- uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+			- name: Set up Go
+				uses: actions/setup-go@v3
+				with:
+					go-version: 1.18
 
-      - name: Set name
-        run: |
-          if [ "${{ matrix.arch }}" == "amd64" ]; then
-            echo "BIN_NAME=autocomm-linux" >> $GITHUB_ENV
-          elif [ "${{ matrix.arch }}" == "arm" ]; then
-            echo "BIN_NAME=autocomm-arm32" >> $GITHUB_ENV
-          else
-            echo "BIN_NAME=autocomm-${{ matrix.arch }}" >> $GITHUB_ENV
-          fi
+			- name: Set name
+				run: |
+					if [ "${{ matrix.arch }}" == "amd64" ]; then
+						echo "BIN_NAME=autocomm-linux" >> $GITHUB_ENV
+					elif [ "${{ matrix.arch }}" == "arm" ]; then
+						echo "BIN_NAME=autocomm-arm32" >> $GITHUB_ENV
+					else
+						echo "BIN_NAME=autocomm-${{ matrix.arch }}" >> $GITHUB_ENV
+					fi
 
-      - name: Build
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./bin/ -ldflags "-s -w" ./...
+			- name: Build
+				run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ./bin/ -ldflags "-s -w" ./...
 
-      - name: Archive binaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.BIN_NAME }}.zip
-          path: ./bin/autocomm
-  
-  build-macos:
-    name: Build MacOS
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
+			- name: Archive binaries
+				uses: actions/upload-artifact@v3
+				with:
+					name: ${{ env.BIN_NAME }}.zip
+					path: ./bin/autocomm
+	
+	build-macos:
+		name: Build MacOS
+		runs-on: macos-latest
+		steps:
+			- uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+			- name: Set up Go
+				uses: actions/setup-go@v3
+				with:
+					go-version: 1.18
 
-      - name: Build
-        run: go build -v -o ./bin/ -ldflags "-s -w" ./...
+			- name: Build
+				run: go build -v -o ./bin/ -ldflags "-s -w" ./...
 
-      - name: Archive binaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: autocomm-macos.zip
-          path: ./bin/autocomm
-  
-  build-windows:
-    name: Build Windows
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
+			- name: Archive binaries
+				uses: actions/upload-artifact@v3
+				with:
+					name: autocomm-macos.zip
+					path: ./bin/autocomm
+	
+	build-windows:
+		name: Build Windows
+		runs-on: windows-latest
+		steps:
+			- uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+			- name: Set up Go
+				uses: actions/setup-go@v3
+				with:
+					go-version: 1.18
 
-      - name: Build
-        run: go build -v -o ./bin/ -ldflags "-s -w" ./...
+			- name: Build
+				run: go build -v -o ./bin/ -ldflags "-s -w" ./...
 
-      - name: Archive binaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: autocomm-windows.zip
-          path: ./bin/autocomm.exe
+			- name: Archive binaries
+				uses: actions/upload-artifact@v3
+				with:
+					name: autocomm-windows.zip
+					path: ./bin/autocomm.exe
 
-  release:
-    name: Release
-    needs: [build-linux, build-macos, build-windows]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: ./bin
+	release:
+		name: Release
+		needs: [build-linux, build-macos, build-windows]
+		runs-on: ubuntu-latest
+		steps:
+			- uses: actions/download-artifact@v3
+				with:
+					path: ./bin
 
-      - name: Zip binaries
-        run: |
-          zip -rj autocomm-linux.zip ./bin/autocomm-linux.zip/autocomm
-          zip -rj autocomm-arm32.zip ./bin/autocomm-arm32.zip/autocomm
-          zip -rj autocomm-arm64.zip ./bin/autocomm-arm64.zip/autocomm
-          zip -rj autocomm-macos.zip ./bin/autocomm-macos.zip/autocomm
-          zip -rj autocomm-windows.zip ./bin/autocomm-windows.zip/autocomm.exe
+			- name: Zip binaries
+				run: |
+					zip -rj autocomm-linux.zip ./bin/autocomm-linux.zip/autocomm
+					zip -rj autocomm-arm32.zip ./bin/autocomm-arm32.zip/autocomm
+					zip -rj autocomm-arm64.zip ./bin/autocomm-arm64.zip/autocomm
+					zip -rj autocomm-macos.zip ./bin/autocomm-macos.zip/autocomm
+					zip -rj autocomm-windows.zip ./bin/autocomm-windows.zip/autocomm.exe
 
-      - uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          token: ${{ secrets.GH_TOKEN }}
-          generate_release_notes: true
-          files: |
-            autocomm-linux.zip
-            autocomm-arm32.zip
-            autocomm-arm64.zip
-            autocomm-macos.zip
-            autocomm-windows.zip
+			- uses: softprops/action-gh-release@v1
+				with:
+					draft: true
+					token: ${{ secrets.GH_TOKEN }}
+					generate_release_notes: true
+					files: |
+						autocomm-linux.zip
+						autocomm-arm32.zip
+						autocomm-arm64.zip
+						autocomm-macos.zip
+						autocomm-windows.zip

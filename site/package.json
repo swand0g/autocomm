@@ -1,10 +1,10 @@
 {
-  "name": "autocomm",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Alexander Swanson",
-  "license": "MIT",
-  "scripts": {
-    "build": "rm -rf public; mkdir public; cp ../install.sh ./public/install.txt"
-  }
+	"name": "autocomm",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "Alexander Swanson",
+	"license": "MIT",
+	"scripts": {
+		"build": "rm -rf public; mkdir public; cp ../install.sh ./public/install.txt"
+	}
 }

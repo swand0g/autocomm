@@ -1,11 +1,11 @@
 <div align="center">
-	<h1>
-		<i>autocomm 🏎️</i>
-	</h1>
+  <h1>
+    <i>autocomm 🏎️</i>
+  </h1>
 
-	Automatically generate commit mesages using ChatGPT 🤖
+  Automatically generate commit mesages using ChatGPT 🤖
 
-	<img src="./cinema/movie.gif" alt="demo" width="80%" />
+  <img src="./cinema/movie.gif" alt="demo" width="80%" />
 </div>
 
 ## *Installation*

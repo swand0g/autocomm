@@ -3,11 +3,20 @@
 version: 2
 updates:
   - package-ecosystem: "gomod" 
-    directory: "/" # Location of package manifests
+    directory: "/"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "deps"
+      prefix: "bump"
+      include: "scope"
+    reviewers:
+      - "swand0g"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "bump"
       include: "scope"
     reviewers:
       - "swand0g"

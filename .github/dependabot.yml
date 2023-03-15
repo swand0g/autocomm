@@ -7,7 +7,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "bump"
+      prefix: "mod"
       include: "scope"
     reviewers:
       - "swand0g"
@@ -16,7 +16,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "bump"
+      prefix: "actions"
       include: "scope"
     reviewers:
       - "swand0g"

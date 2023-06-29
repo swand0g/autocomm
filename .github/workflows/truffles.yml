@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Find secrets
-      uses: trufflesecurity/trufflehog@v3.36.0
+      uses: trufflesecurity/trufflehog@v3.42.0
       with:
         path: ./
         base: main
